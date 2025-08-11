@@ -1,0 +1,42 @@
+[
+  {
+    "id": 4,
+    "nome": "Morango do Amor",
+    "categoria": "doces gelados",
+    "preco": 35,
+    "precoOriginal": 35,
+    "desconto": 0,
+    "imagem": "https://img.olx.com.br/images/48/486593542062062.webp",
+    "descricao": "Morango do Amor"
+  },
+  {
+    "id": 5,
+    "nome": "Bolo de Cenoura",
+    "categoria": "bolos",
+    "preco": 13.18,
+    "precoOriginal": 65.9,
+    "desconto": 80,
+    "imagem": "https://receitadaboa.com.br/wp-content/uploads/2024/12/iStock-1312530797.jpg",
+    "descricao": "Bolo de cenoura"
+  },
+  {
+    "id": 6,
+    "nome": "Bolo de Caçarola",
+    "categoria": "bolos",
+    "preco": 24.9,
+    "precoOriginal": 24.9,
+    "desconto": 0,
+    "imagem": "https://receitatodahora.com.br/wp-content/uploads/2024/10/bolo-cacarola-2709-1024x683.jpg.webp",
+    "descricao": "Bolo de caçarola com recheio de cocô e fofo"
+  },
+  {
+    "id": 7,
+    "nome": "Sonho",
+    "categoria": "bolos",
+    "preco": 5.85,
+    "precoOriginal": 9,
+    "desconto": 35,
+    "imagem": "https://lirp.cdn-website.com/33406c6e/dms3rep/multi/opt/Untitled-1-1920w.jpg",
+    "descricao": "Sonho feito com recheio de creme da casa cremoso!"
+  }
+]

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <title>Inicio - Confeitaria M&H</title>
+</head>
+
+<body>
+  <header>
+    <div class="logo">
+      <a href="./index.html"><i class="fa-solid fa-cake-candles"></i></a>
+      <a href="./index.html">
+        <h1>Confeitaria M&H</h1>
+      </a>
+    </div>
+    <div class="search-container">
+      <input type="text" placeholder="Buscar doces..." class="search-input" aria-label="Buscar produtos" />
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="header-icons">
+      <div class="icon-wrapper" tabindex="0" role="button" title="Favoritos">
+        <i class="fa-solid fa-heart"></i>
+        <span class="icon-badge" id="badge-favoritos">0</span>
+      </div>
+      <div class="icon-wrapper" tabindex="0" role="button" title="Carrinho">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="icon-badge" id="badge-carrinho">0</span>
+      </div>
+      <div class="icon-wrapper" tabindex="0" role="button" title="Perfil">
+        <i class="fa-solid fa-user"></i>
+      </div>
+  </header>
+
+  <div class="categories-container">
+    <nav class="categories-bar" role="navigation" aria-label="Categorias de produtos">
+      <button class="category-btn active" data-category="all" type="button">
+        <i class="fa-solid fa-border-all"></i>
+        Todos
+      </button>
+      <button class="category-btn" data-category="bolos" type="button">
+        <i class="fa-solid fa-cake-candles"></i>
+        Bolos
+      </button>
+      <button class="category-btn" data-category="cupcakes" type="button">
+        <i class="fa-solid fa-mug-hot"></i>
+        Cupcakes
+      </button>
+      <button class="category-btn" data-category="trufas" type="button">
+        <i class="fa-solid fa-candy-cane"></i>
+        Trufas
+      </button>
+      <button class="category-btn" data-category="cookies" type="button">
+        <i class="fa-solid fa-cookie"></i>
+        Cookies
+      </button>
+      <button class="category-btn" data-category="doces gelados" type="button">
+        <i class="fa-solid fa-ice-cream"></i>
+        Doces Gelados
+      </button>
+    </nav>
+  </div>
+
+  <section class="hero-section" aria-label="Promoção de inauguração">
+    <div class="carousel">
+      <button class="arrow left-arrow" aria-label="Anterior">&#10094;</button>
+
+      <div class="carousel-content">
+        <div class="slide active">
+          <h2>Promoção de Inauguração 🍩</h2>
+          <p>Até 20% de desconto nos doces mais pedidos</p>
+        </div>
+        <div class="slide">
+          <h2>Novos Sabores Chegando! 🍫</h2>
+          <p>Experimente nossas novidades deliciosas</p>
+        </div>
+        <div class="slide">
+          <h2>Frete Grátis Hoje! 🚚</h2>
+          <p>Em pedidos acima de R$50,00</p>
+        </div>
+      </div>
+
+      <button class="arrow right-arrow" aria-label="Próximo">&#10095;</button>
+    </div>
+  </section>
+
+  <main class="products" aria-live="polite" aria-atomic="true">
+    <div class="ordenar-container">
+      <label for="ordenarSelect">Ordenar por:</label>
+      <select id="ordenarSelect">
+        <option value="nomeProduto">Nome do produto</option>
+        <option value="maiorPreco">Maior preço</option>
+        <option value="menorPreco">Menor preço</option>
+        <option value="maisVendido">Mais vendido</option>
+        <option value="lancamento">Lançamento</option>
+      </select>
+    </div>
+    <div class="products-container"></div>
+  </main>
+
+  <!-- Modal/Formulário -->
+  <div id="modalAddProduto" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDesc"
+    tabindex="-1">
+    <div class="modal-content">
+      <h2 id="modalTitle">Adicionar Produto</h2>
+      <p id="modalDesc" class="sr-only">Formulário para adicionar novo produto ao catálogo</p>
+
+      <form id="formAddProduto" novalidate>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required minlength="3" placeholder="Ex: Bolo Red Velvet"
+          autocomplete="off" />
+
+        <label for="categoria">Categoria:</label>
+        <select id="categoria" name="categoria" required>
+          <option value="">Selecione uma categoria</option>
+          <option value="bolos">Bolos</option>
+          <option value="cupcakes">Cupcakes</option>
+          <option value="trufas">Trufas</option>
+          <option value="cookies">Cookies</option>
+          <option value="doces gelados">Doces Gelados</option>
+        </select>
+
+        <label for="preco">Preço (R$):</label>
+        <input type="number" id="preco" name="preco" min="0" step="0.01" required placeholder="Ex: 49.90"
+          autocomplete="off" />
+
+        <label for="descricao">Descrição:</label>
+        <textarea id="descricao" name="descricao" rows="3" required placeholder="Descrição do produto"
+          minlength="10"></textarea>
+
+        <label for="imagem">URL da Imagem:</label>
+        <input type="url" id="imagem" name="imagem" required placeholder="https://" autocomplete="off" />
+
+        <label for="desconto">Desconto (%)</label>
+        <input type="number" id="desconto" name="desconto" min="0" max="100" value="0" />
+
+
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary">Adicionar</button>
+          <button type="button" id="btnFecharModal" class="btn-secondary">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-section about">
+        <h3>Confeitaria M&H</h3>
+        <p>Doces feitos com amor para tornar seus momentos ainda mais especiais.</p>
+        <div class="socials">
+          <a href="https://www.linkedin.com/in/marco-medeirosdev/" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+          <a href="https://github.com/marcomedeiiros" target="_blank" rel="noopener" aria-label="GitHub">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="https://marcomedeiiros.github.io/portifolio/#" target="_blank" rel="noopener" aria-label="Portfólio">
+            <i class="fas fa-briefcase"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-section links">
+        <h4>Links Rápidos</h4>
+        <ul>
+          <li><a href="#">Todos</a></li>
+          <li><a href="#">Bolos</a></li>
+          <li><a href="#">Cupcakes</a></li>
+          <li><a href="#">Trufas</a></li>
+          <li><a href="#">Cookies</a></li>
+          <li><a href="#">Doces Gelados</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section contact">
+        <h4>Contato</h4>
+        <p><strong>Telefone:</strong> (27) 9989-4029</p>
+        <p><strong>Email:</strong> contato@confeitariamandh.com.br</p>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 - Confeitaria M&H. Todos os Direitos Reservados.</p>
+    </div>
+  </footer>
+
+</body>
+<script src="script.js"></script>
+
+</html>
