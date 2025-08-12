@@ -19,5 +19,12 @@
     "rating": 5,
     "author": "Usuário",
     "id": 3
+  },
+  {
+    "produtoId": 8,
+    "text": "muito cremoso, o meu veio premiado com dois morangos, amo!",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 4
   }
 ]
