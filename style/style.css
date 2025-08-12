@@ -707,3 +707,31 @@ a {
     margin-right: 0.5rem;
     font-size: 0.9rem;
 }
+
+.dropdown {
+  display: none;
+  position: absolute;
+  background-color: white;
+  border-radius: 12px;
+  font-weight: 600;
+  top: 105%;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #222;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown a:hover {
+    background-color: #4f46e5;
+    color: white;
+}
+
+.icon-wrapper:hover .dropdown,
+.icon-wrapper:focus .dropdown {
+    display: block;
+}

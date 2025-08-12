@@ -17,17 +17,7 @@
     "precoOriginal": 65.9,
     "desconto": 80,
     "imagem": "https://receitadaboa.com.br/wp-content/uploads/2024/12/iStock-1312530797.jpg",
-    "descricao": "Bolo de cenoura"
-  },
-  {
-    "id": 6,
-    "nome": "Bolo de Caçarola",
-    "categoria": "bolos",
-    "preco": 24.9,
-    "precoOriginal": 24.9,
-    "desconto": 0,
-    "imagem": "https://receitatodahora.com.br/wp-content/uploads/2024/10/bolo-cacarola-2709-1024x683.jpg.webp",
-    "descricao": "Bolo de caçarola com recheio de cocô e fofo"
+    "descricao": "Bolo de cenoura de chocolate com calda de chocolate"
   },
   {
     "id": 7,
