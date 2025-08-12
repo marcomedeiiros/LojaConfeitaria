@@ -28,6 +28,59 @@ async function carregarProdutos() {
   }
 }
 
+// Função para carregar avaliações da API e retornar array
+async function carregarAvaliacoes() {
+  try {
+    const res = await fetch(API_AVALIACOES_URL);
+    if (!res.ok) throw new Error("Erro ao carregar avaliações");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
+
+// Atualiza produtos com dados das avaliações (média e quantidade)
+function atualizarProdutosComAvaliacoes(avaliacoes) {
+  // Agrupa avaliações por produtoId
+  const avaliacoesPorProduto = {};
+  avaliacoes.forEach(av => {
+    if (!avaliacoesPorProduto[av.produtoId]) {
+      avaliacoesPorProduto[av.produtoId] = [];
+    }
+    avaliacoesPorProduto[av.produtoId].push(av.rating);
+  });
+
+  // Atualiza cada produto com média e quantidade de avaliações
+  produtos = produtos.map(prod => {
+    const avals = avaliacoesPorProduto[prod.id] || [];
+    const soma = avals.reduce((acc, val) => acc + val, 0);
+    const media = avals.length ? soma / avals.length : 0;
+    return {
+      ...prod,
+      rating: media,
+      avaliacoes: avals.length,
+    };
+  });
+}
+
+// Modifique carregarProdutos para carregar as avaliações e atualizar antes de mostrar
+async function carregarProdutos() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Erro ao carregar produtos.");
+    produtos = await res.json();
+
+    // Carrega avaliações e atualiza os produtos
+    const avaliacoes = await carregarAvaliacoes();
+    atualizarProdutosComAvaliacoes(avaliacoes);
+
+    mostrarProdutos();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
 function mostrarProdutos() {
   let htmlProdutos = "";
 
