@@ -224,7 +224,6 @@ async function carregarProduto() {
       discountBadge.style.display = "none";
     }
 
-    // 🔹 Gera breadcrumb dinâmico com base no produto carregado
     gerarBreadcrumb(produto);
 
   } catch (error) {

@@ -144,7 +144,7 @@ function mostrarProdutos() {
 
         <a href="./mostruarioProduto.html?id=${prd.id}">
         <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
-        </a>
+       
 
         
         <div class="product-info">
@@ -162,6 +162,7 @@ function mostrarProdutos() {
       }
             R$ <span class="price-final">${precoFinal}</span>
           </p>
+           </a>
 
           <div class="product-actions">
             <button class="edit-btn" data-id="${prd.id}">
