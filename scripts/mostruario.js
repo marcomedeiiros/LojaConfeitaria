@@ -4,7 +4,37 @@ const todosBotoes = document.querySelectorAll(".category-btn");
 const API_PRODUTOS_URL = "http://localhost:3000/produtos";
 const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes";
 
-// Pega parâmetro na URL
+// 🔹 Definindo params e idDoProduto logo no início
+const params = new URLSearchParams(window.location.search);
+const idDoProduto = Number(params.get('id')) || 0;
+const categoria = params.get('categoria') || '';
+const produtoId = params.get("id"); // mantive pq você usa mais abaixo
+
+
+function gerarBreadcrumb(produto) {
+  const breadcrumbEl = document.getElementById("breadcrumb");
+  if (!breadcrumbEl) return;
+  breadcrumbEl.innerHTML = `
+    <a href="index.html">Home</a> &gt;
+    <a href="index.html?categoria=${encodeURIComponent(produto.categoria)}">${produto.categoria}</a> &gt;
+    <span>${produto.nome}</span>
+  `;
+}
+
+// Busca título via API + gera breadcrumb
+fetch(API_PRODUTOS_URL)
+  .then(res => res.json())
+  .then(produtos => {
+    const produto = produtos.find(p => p.id == idDoProduto);
+    if (produto) {
+      gerarBreadcrumb(produto);
+      document.title = produto.nome;
+    } else {
+      document.title = "Produto não encontrado";
+    }
+  });
+
+// Pega parâmetro na URL (função extra que você tinha)
 function getParameterByName(name) {
   const url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
@@ -20,13 +50,12 @@ function mostrarAvaliacoes() {
   container.innerHTML = '';
 
   const avaliacoesDoProduto = avaliacoes.filter(av => av.produtoId == idDoProduto);
-
   const numeroAvaliacoes = avaliacoesDoProduto.length;
 
   if (numeroAvaliacoes === 0) {
     container.innerHTML = '<p>Seja o primeiro a avaliar este produto!</p>';
     document.getElementById('numero-avaliacoes').textContent = '0';
-    document.getElementById('estrelas-avaliacao').textContent = '☆☆☆☆☆';
+    document.getElementById('estrelas-avaliacao').innerHTML = '☆☆☆☆☆';
     document.getElementById('link-opinioes').textContent = '0 OPINIÕES';
     return;
   }
@@ -34,8 +63,6 @@ function mostrarAvaliacoes() {
   const somaNotas = avaliacoesDoProduto.reduce((acc, av) => acc + av.rating, 0);
   const media = somaNotas / numeroAvaliacoes;
 
-  // Gerar estrelas coloridas (★ = cheia, ☆ = vazia)
-  // Aqui vamos usar estrelas cheias para parte inteira, metade para decimal >= 0.5, e vazias pro resto
   const estrelasCheias = Math.floor(media);
   const temMeiaEstrela = (media - estrelasCheias) >= 0.5;
   const estrelasVazias = 5 - estrelasCheias - (temMeiaEstrela ? 1 : 0);
@@ -45,19 +72,16 @@ function mostrarAvaliacoes() {
     estrelasHtml += '<span style="color:#f39c12;">★</span>';
   }
   if (temMeiaEstrela) {
-    estrelasHtml += '<span style="color:#f39c12;">☆</span>'; 
+    estrelasHtml += '<span style="color:#f39c12;">☆</span>';
   }
   for (let i = 0; i < estrelasVazias; i++) {
     estrelasHtml += '<span style="color:#ccc;">☆</span>';
   }
 
-  // Atualiza as estrelas coloridas no container
   document.getElementById('estrelas-avaliacao').innerHTML = estrelasHtml;
-  // Atualiza o número de avaliações e o texto do link
   document.getElementById('numero-avaliacoes').textContent = numeroAvaliacoes;
   document.getElementById('link-opinioes').textContent = `${numeroAvaliacoes} OPINIÃO${numeroAvaliacoes > 1 ? 'ES' : ''}`;
 
-  // Renderiza as avaliações individuais abaixo
   avaliacoesDoProduto.forEach(av => {
     const stars = "★".repeat(av.rating) + "☆".repeat(5 - av.rating);
     const div = document.createElement('div');
@@ -72,17 +96,6 @@ function mostrarAvaliacoes() {
     container.appendChild(div);
   });
 }
-
-fetch('../data/produtos.json')
-  .then(res => res.json())
-  .then(produtos => {
-    const produto = produtos.find(p => p.id === idDoProduto);
-    if (produto) {
-      document.title = produto.nome;
-    } else {
-      document.title = "Produto não encontrado";
-    }
-  });
 
 // Busca avaliações do backend
 async function carregarAvaliacoes() {
@@ -149,8 +162,8 @@ function trocarCategoria(categoria) {
   mostrarProdutos();
 }
 
+// Zoom imagem
 const imgMain = document.querySelector('.product-main-image > img');
-
 imgMain.addEventListener('mousemove', e => {
   const rect = imgMain.getBoundingClientRect();
   const x = e.clientX - rect.left;
@@ -163,16 +176,13 @@ imgMain.addEventListener('mousemove', e => {
   imgMain.style.transform = 'scale(1.5)';
   imgMain.style.transition = 'transform 0.1s ease-out';
 });
-
 imgMain.addEventListener('mouseleave', () => {
   imgMain.style.transformOrigin = 'center center';
   imgMain.style.transform = 'scale(1)';
   imgMain.style.transition = 'transform 0.3s ease-in';
 });
 
-const params = new URLSearchParams(window.location.search);
-const idDoProduto = Number(params.get('id')) || 0;
-
+// Carregar produto
 async function carregarProduto() {
   if (!idDoProduto) {
     alert("Produto não especificado.");
@@ -184,7 +194,6 @@ async function carregarProduto() {
     if (!res.ok) throw new Error("Erro ao carregar produtos.");
 
     const produtos = await res.json();
-
     const produto = produtos.find(p => p.id == idDoProduto);
 
     if (!produto) {
@@ -192,6 +201,7 @@ async function carregarProduto() {
       return;
     }
 
+    // Atualiza informações visuais
     document.getElementById("img-produto-main").src = produto.imagem;
     document.getElementById("img-produto-main").alt = produto.nome;
     document.getElementById("nome-produto").textContent = produto.nome;
@@ -199,6 +209,7 @@ async function carregarProduto() {
     document.getElementById("img-box-img").src = produto.imagem;
     document.getElementById("img-box-img").alt = produto.nome + " box image";
 
+    // Atualiza preços
     const precoOriginal = produto.precoOriginal;
     const precoComDesconto = precoOriginal * (1 - produto.desconto / 100);
 
@@ -212,6 +223,9 @@ async function carregarProduto() {
     } else {
       discountBadge.style.display = "none";
     }
+
+    // 🔹 Gera breadcrumb dinâmico com base no produto carregado
+    gerarBreadcrumb(produto);
 
   } catch (error) {
     alert(error.message);

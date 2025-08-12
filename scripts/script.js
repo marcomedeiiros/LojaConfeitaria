@@ -13,7 +13,8 @@ const btnFecharModal = document.getElementById("btnFecharModal");
 const formAddProduto = document.getElementById("formAddProduto");
 const ordenarSelect = document.getElementById("ordenarSelect");
 
-const API_URL = "http://localhost:3000/produtos"; // backend
+const API_URL = "http://localhost:3000/produtos"; // backend produtos
+const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes"; // backend avaliacao
 
 // Carrega os produtos do backend
 async function carregarProdutos() {
