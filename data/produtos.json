@@ -1,15 +1,5 @@
 [
   {
-    "id": 4,
-    "nome": "Morango do Amor",
-    "categoria": "doces gelados",
-    "preco": 35,
-    "precoOriginal": 35,
-    "desconto": 0,
-    "imagem": "https://img.olx.com.br/images/48/486593542062062.webp",
-    "descricao": "Morango do Amor"
-  },
-  {
     "id": 5,
     "nome": "Bolo de Cenoura",
     "categoria": "bolos",
@@ -28,5 +18,15 @@
     "desconto": 35,
     "imagem": "https://lirp.cdn-website.com/33406c6e/dms3rep/multi/opt/Untitled-1-1920w.jpg",
     "descricao": "Sonho feito com recheio de creme da casa cremoso!"
+  },
+  {
+    "nome": "Morango do Amor",
+    "categoria": "doces gelados",
+    "preco": 26.32,
+    "precoOriginal": 32.9,
+    "desconto": 20,
+    "imagem": "https://img.olx.com.br/images/48/486593542062062.webp",
+    "descricao": "Morango do amor feito com morango e cobertura de açucar",
+    "id": 8
   }
 ]

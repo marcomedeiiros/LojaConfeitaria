@@ -1,0 +1,23 @@
+[
+  {
+    "produtoId": 7,
+    "text": "Muito top",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 1
+  },
+  {
+    "produtoId": 7,
+    "text": "esperava mais",
+    "rating": 1,
+    "author": "Usuário",
+    "id": 2
+  },
+  {
+    "produtoId": 5,
+    "text": "muito bom, me apaixonei pelo recheio",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 3
+  }
+]

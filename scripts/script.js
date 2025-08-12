@@ -19,10 +19,11 @@ const API_URL = "http://localhost:3000/produtos"; // backend
 async function carregarProdutos() {
   try {
     const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Erro ao carregar produtos.");
     produtos = await res.json();
     mostrarProdutos();
   } catch (error) {
-    alert("Erro ao carregar produtos.");
+    alert(error.message);
   }
 }
 
@@ -87,7 +88,10 @@ function mostrarProdutos() {
           <i class="fa fa-heart-o"></i>
         </button>
 
-        <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" />
+        <a href="./mostruarioProduto.html?id=${prd.id}">
+        <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
+        </a>
+
         
         <div class="product-info">
           <h3 class="product-name">${prd.nome}</h3>
@@ -183,6 +187,39 @@ function mostrarProdutos() {
       modalAddProduto.style.display = "flex";
     });
   });
+}
+
+
+// Função para pegar o parâmetro da URL
+function getParameterByName(name) {
+  const url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+  const results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+const productId = getParameterByName('id');
+
+async function carregarProdutoPorId(id) {
+  try {
+    const res = await fetch(`${API_URL}/${id}`);
+    if (!res.ok) throw new Error('Produto não encontrado');
+    const produto = await res.json();
+
+    document.getElementById('img-produto').src = produto.imagem;
+    document.getElementById('img-produto').alt = produto.nome;
+    document.getElementById('nome-produto').textContent = produto.nome;
+    document.getElementById('desc-produto').textContent = produto.descricao;
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+if (productId) {
+  carregarProdutoPorId(productId);
 }
 
 function adicionarEventosRemocao() {

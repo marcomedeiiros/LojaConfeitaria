@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="../style/mostruario.css" />
+    <title>Mostruário Produto - Confeitaria M&H</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="./index.html"><i class="fa-solid fa-cake-candles"></i></a>
+            <a href="./index.html">
+                <h1>Confeitaria M&H</h1>
+            </a>
+        </div>
+        <div class="search-container">
+            <input type="text" placeholder="Buscar doces..." class="search-input" aria-label="Buscar produtos" />
+            <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+
+        <div class="header-icons">
+            <div class="icon-wrapper" tabindex="0" role="button" title="Favoritos">
+                <i class="fa-solid fa-heart"></i>
+                <span class="icon-badge" id="badge-favoritos">0</span>
+            </div>
+            <div class="icon-wrapper" tabindex="0" role="button" title="Carrinho">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span class="icon-badge" id="badge-carrinho">0</span>
+            </div>
+            <div class="icon-wrapper" tabindex="0" role="button" title="Perfil">
+                <i class="fa-solid fa-user"></i>
+                <div class="dropdown" role="menu" aria-label="Opções de perfil">
+                    <a href="./login.html" role="menuitem">Login</a>
+                    <a href="./registrar.html" role="menuitem">Registrar</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="categories-container">
+        <nav class="categories-bar" role="navigation" aria-label="Categorias de produtos">
+            <a href="../page/index.html"><button class="category-btn active" data-category="all" type="button">
+                    <i class="fa-solid fa-border-all"></i>
+                    Todos
+                </button></a>
+            <a href="../page/index.html"><button class="category-btn" data-category="bolos" type="button">
+                    <i class="fa-solid fa-cake-candles"></i>
+                    Bolos
+                </button></a>
+            <a href="../page/index.html"><button class="category-btn" data-category="cupcakes" type="button">
+                    <i class="fa-solid fa-mug-hot"></i>
+                    Cupcakes
+                </button></a>
+            <a href="../page/index.html"><button class="category-btn" data-category="trufas" type="button">
+                    <i class="fa-solid fa-candy-cane"></i>
+                    Trufas
+                </button></a>
+            <a href="../page/index.html"><button class="category-btn" data-category="cookies" type="button">
+                    <i class="fa-solid fa-cookie"></i>
+                    Cookies
+                </button></a>
+            <a href="../page/index.html"><button class="category-btn" data-category="doces gelados" type="button">
+                    <i class="fa-solid fa-ice-cream"></i>
+                    Doces Gelados
+                </button></a>
+        </nav>
+    </div>
+
+    <section class="product-details">
+        <aside class="product-thumbs" id="product-thumbs">
+            <!-- Miniaturas vão aqui -->
+        </aside>
+
+        <div class="product-main-image">
+            <div class="img-box" id="img-box">
+                <img src="" alt="Box Imagem do Produto" id="img-box-img" />
+            </div>
+            <img src="" alt="" id="img-produto-main" />
+            <div class="discount-badge" id="discount-badge"></div>
+        </div>
+
+
+        <article class="product-info">
+            <h2 id="nome-produto">Carregando...</h2>
+
+            <div class="product-rating" aria-label="Avaliação do produto">
+                <span id="numero-avaliacoes">0</span>
+                <span class="stars" id="estrelas-avaliacao">☆☆☆☆☆</span>
+                <a href="#" id="link-opinioes">0 OPINIÕES</a>
+            </div>
+
+            <div class="product-price" id="preco-produto">
+                <span id="preco-original" class="preco-original"></span>
+                <span id="preco-com-desconto" class="preco-com-desconto"></span>
+            </div>
+            <div class="purchase-controls">
+                <label for="quantidade" class="sr-only">Quantidade</label>
+                <input type="number" min="1" value="1" aria-label="Quantidade" id="quantidade" />
+                <button class="btn-buy" id="btn-comprar">COMPRAR</button>
+            </div>
+
+            <div class="cep-calculation">
+                <label for="cep"><i class="fa-solid fa-truck"></i> INFORME SEU CEP</label>
+                <input type="text" id="cep" placeholder="00000-000" maxlength="9" aria-label="Informe seu CEP" />
+                <button class="btn-calc">Calcular</button>
+            </div>
+
+            <p id="descricao-produto" style="margin-top: 2rem;">Descrição do produto...</p>
+        </article>
+    </section>
+
+    <section class="product-reviews" aria-label="Avaliações do produto">
+        <h3>Avalie este produto</h3>
+
+        <form id="review-form">
+            <label for="review-text">Comentário:</label>
+            <textarea id="review-text" rows="3" required placeholder="Escreva sua avaliação..."></textarea>
+
+            <label for="review-rating">Nota:</label>
+            <select id="review-rating" required>
+                <option value="" disabled selected>Escolha a nota</option>
+                <option value="5">★★★★★ (5)</option>
+                <option value="4">★★★★ (4)</option>
+                <option value="3">★★★ (3)</option>
+                <option value="2">★★ (2)</option>
+                <option value="1">★ (1)</option>
+            </select>
+
+            <button type="submit">Enviar avaliação</button>
+        </form>
+
+        <h3>Comentários</h3>
+        <div id="reviews-container"></div>
+    </section>
+
+</body>
+<script src="../scripts/mostruario.js"></script>
+
+</html>
