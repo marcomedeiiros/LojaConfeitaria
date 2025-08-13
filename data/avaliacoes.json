@@ -33,5 +33,12 @@
     "rating": 5,
     "author": "Usuário",
     "id": 5
+  },
+  {
+    "produtoId": 9,
+    "text": "legal demais!!",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 6
   }
 ]

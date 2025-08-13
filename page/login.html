@@ -1,12 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Confeitaria M&H</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="../style/login.css">
 </head>
+
 <body>
-    
+    <div class="floating-cakes">
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+    </div>
+
+    <div class="login-container">
+        <div class="login-box">
+
+            <div class="login-left">
+                <a href="../page/index.html">
+                    <div class="logo-container">
+                        <i class="logo-icon fa-solid fa-cake-candles"></i>
+                        <h1 class="logo-text">Confeitaria M&H</h1>
+                    </div>
+                </a>
+                <div class="social-icons-left">
+                    <a href="https://www.facebook.com" target="_blank" class="facebook"><i
+                            class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" class="instagram"><i
+                            class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+
+            <div class="login-right">
+                <h2 class="login-title">Entrar</h2>
+                <form class="login-form">
+                    <div class="input-group username-group">
+                        <label for="username" class="input-label">Login</label>
+                        <input type="text" id="username" class="input-field" placeholder="Digite seu login">
+                    </div>
+                    <div class="input-group password-group">
+                        <label for="password" class="input-label">Senha</label>
+                        <input type="password" id="password" class="input-field" placeholder="Digite sua senha">
+                    </div>
+
+                    <div class="options">
+                        <label class="remember-login">
+                            <input type="checkbox" id="remember"> Lembrar meu login
+                        </label>
+                        <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                    </div>
+                    <button type="submit" class="login-button">Entrar</button>
+                    <p class="register-text">
+                        Não tem conta ainda? <a href="../page/registrar.html">Registre-se</a>
+                    </p>
+                    <div class="social-login">
+                        <button type="button" class="social-button google">
+                            <i class="fab fa-google"></i>
+                        </button>
+                        <button type="button" class="social-button facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
+
 </html>
