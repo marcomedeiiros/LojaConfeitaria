@@ -396,7 +396,7 @@ a {
 .product-price {
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: #333;
     margin-bottom: 1rem;
 }
 
@@ -460,7 +460,7 @@ a {
 
 .product-price {
     font-size: 1.5rem;
-    color: var(--primary-color);
+    color: #333;
     font-weight: bold;
     margin-bottom: 1rem;
 }

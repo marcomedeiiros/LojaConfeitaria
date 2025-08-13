@@ -452,8 +452,7 @@ a {
 
 .product-reviews {
     max-width: 1200px;
-    margin: 80px auto 40px;
-    padding: 100px;
+    margin: 90px auto 40px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -462,7 +461,7 @@ a {
 
 .product-reviews h3 {
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
 }
 
 .product-reviews hr {
@@ -495,21 +494,22 @@ a {
     box-shadow: 0 0 5px var(--primary-color);
 }
 
-.product-reviews button {
-    background-color: var(--primary-color);
-    color: white;
-    font-weight: 700;
-    padding: 12px 0;
+.product-reviews .btn-avaliar {
+    width: auto;
+    background-color: var(--accent-color);
+    color: var(--white-color);
     border: none;
-    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 0.3rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 1.1rem;
+    transition: 0.3s ease;
+    align-self: center;
 }
 
-.product-reviews button:hover {
-    background-color: #3a3a9d;
-    /* tom mais escuro no hover */
+.product-reviews .btn-avaliar:hover {
+    background-color: var(--primary-color);
 }
 
 #reviews-container {
@@ -517,10 +517,8 @@ a {
     flex-direction: column;
     gap: 20px;
     max-height: 400px;
-    /* altura máxima com scroll */
     overflow-y: auto;
     padding-right: 10px;
-    /* espaço para scrollbar */
 }
 
 .review-item {
@@ -662,8 +660,7 @@ a {
 
 .produtos-relacionados {
     padding: 2rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto 3rem;
+    margin: 90px 21rem 40px;
 }
 
 .produtos-relacionados h2 {
@@ -674,5 +671,165 @@ a {
 .produtos-relacionados hr {
     border: none;
     border-top: 2px solid #ccc;
-    margin-bottom: 1.5rem;
+}
+
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    height: 180px;
+    /* altura fixa para as imagens */
+    margin-bottom: 10px;
+}
+
+.product-card p {
+    flex-grow: 1;
+    /* Faz o parágrafo ocupar o máximo para empurrar o botão para baixo */
+    margin-bottom: 10px;
+}
+
+.product-card {
+    position: relative;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--white-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.product-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 5px 0 10px 0;
+    min-height: 40px;
+    /* Para altura fixa */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.product-card h3 {
+    margin: 0 0 10px;
+}
+
+
+.product-discount {
+    background-color: #ff5722;
+    color: white;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 5px;
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 0.9rem;
+}
+
+.favorite-btn {
+    background: transparent;
+    border: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.favorite-btn:hover {
+    color: red;
+}
+
+.product-img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+.product-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-name {
+    font-size: 1.1rem;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    color: #333;
+}
+
+.product-price {
+    font-size: 1rem;
+    color: #333;
+}
+
+.price-original {
+    text-decoration: line-through;
+    color: #999;    
+}
+
+.price-final {
+    font-weight: 700;
+    color: #333;
+}
+
+.product-button {
+    margin-top: 12px;
+    padding: 10px;
+    border: none;
+    background-color: #FFB347;
+    color: white;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.product-button:hover {
+    background-color: #FF7BAC;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 5px 0;
+}
+
+.product-rating .fa-star {
+  color: #ffc107; 
+}
+
+.product-rating .fa-star-o {
+  color: #ccc; 
+}
+
+.product-rating .rating-count {
+  font-size: 0.85rem;
+  color: #666;
+  margin-left: 4px;
 }

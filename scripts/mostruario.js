@@ -4,12 +4,10 @@ const todosBotoes = document.querySelectorAll(".category-btn");
 const API_PRODUTOS_URL = "http://localhost:3000/produtos";
 const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes";
 
-// 🔹 Definindo params e idDoProduto logo no início
 const params = new URLSearchParams(window.location.search);
 const idDoProduto = Number(params.get('id')) || 0;
 const categoria = params.get('categoria') || '';
-const produtoId = params.get("id"); // mantive pq você usa mais abaixo
-
+const produtoId = params.get("id"); 
 
 function gerarBreadcrumb(produto) {
   const breadcrumbEl = document.getElementById("breadcrumb");
@@ -47,6 +45,8 @@ function getParameterByName(name) {
 
 function mostrarAvaliacoes() {
   const container = document.getElementById('reviews-container');
+  if (!container) return;  // Segurança extra
+
   container.innerHTML = '';
 
   const avaliacoesDoProduto = avaliacoes.filter(av => av.produtoId == idDoProduto);
@@ -54,9 +54,12 @@ function mostrarAvaliacoes() {
 
   if (numeroAvaliacoes === 0) {
     container.innerHTML = '<p>Seja o primeiro a avaliar este produto!</p>';
-    document.getElementById('numero-avaliacoes').textContent = '0';
-    document.getElementById('estrelas-avaliacao').innerHTML = '☆☆☆☆☆';
-    document.getElementById('link-opinioes').textContent = '0 OPINIÕES';
+    const numeroEl = document.getElementById('numero-avaliacoes');
+    const estrelasEl = document.getElementById('estrelas-avaliacao');
+    const linkOpinioesEl = document.getElementById('link-opinioes');
+    if (numeroEl) numeroEl.textContent = '0';
+    if (estrelasEl) estrelasEl.innerHTML = '☆☆☆☆☆';
+    if (linkOpinioesEl) linkOpinioesEl.textContent = '0 OPINIÕES';
     return;
   }
 
@@ -72,15 +75,20 @@ function mostrarAvaliacoes() {
     estrelasHtml += '<span style="color:#f39c12;">★</span>';
   }
   if (temMeiaEstrela) {
+    // Usar uma meia estrela real seria ideal, mas como você usa '☆' para meia, mantive.
     estrelasHtml += '<span style="color:#f39c12;">☆</span>';
   }
   for (let i = 0; i < estrelasVazias; i++) {
     estrelasHtml += '<span style="color:#ccc;">☆</span>';
   }
 
-  document.getElementById('estrelas-avaliacao').innerHTML = estrelasHtml;
-  document.getElementById('numero-avaliacoes').textContent = numeroAvaliacoes;
-  document.getElementById('link-opinioes').textContent = `${numeroAvaliacoes} OPINIÃO${numeroAvaliacoes > 1 ? 'ES' : ''}`;
+  const estrelasEl = document.getElementById('estrelas-avaliacao');
+  const numeroEl = document.getElementById('numero-avaliacoes');
+  const linkOpinioesEl = document.getElementById('link-opinioes');
+
+  if (estrelasEl) estrelasEl.innerHTML = estrelasHtml;
+  if (numeroEl) numeroEl.textContent = numeroAvaliacoes;
+  if (linkOpinioesEl) linkOpinioesEl.textContent = `${numeroAvaliacoes} OPINIÃO${numeroAvaliacoes > 1 ? 'ES' : ''}`;
 
   avaliacoesDoProduto.forEach(av => {
     const stars = "★".repeat(av.rating) + "☆".repeat(5 - av.rating);
@@ -107,47 +115,154 @@ async function carregarAvaliacoes() {
   } catch (err) {
     console.error(err);
     const container = document.getElementById('reviews-container');
-    container.innerHTML = '<p>Erro ao carregar avaliações.</p>';
+    if (container) container.innerHTML = '<p>Erro ao carregar avaliações.</p>';
   }
 }
 
-// Listener para enviar avaliação
-const reviewForm = document.getElementById('review-form');
-reviewForm.addEventListener('submit', async e => {
-  e.preventDefault();
-
-  const text = document.getElementById('review-text').value.trim();
-  const rating = parseInt(document.getElementById('review-rating').value);
-
-  if (!text || !rating) {
-    alert('Por favor, preencha o comentário e a nota.');
-    return;
-  }
-
-  const novaAvaliacao = {
-    produtoId: idDoProduto,
-    text,
-    rating,
-    author: "Usuário"
-  };
-
+async function carregarSessaoGostar() {
   try {
-    const res = await fetch(API_AVALIACOES_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(novaAvaliacao),
+    // Busca produtos e avaliações
+    const [resProdutos, resAvaliacoes] = await Promise.all([
+      fetch(API_PRODUTOS_URL),
+      fetch(API_AVALIACOES_URL)
+    ]);
+
+    if (!resProdutos.ok || !resAvaliacoes.ok) {
+      throw new Error('Erro ao carregar dados.');
+    }
+
+    const produtos = await resProdutos.json();
+    const avaliacoes = await resAvaliacoes.json();
+
+    // ID do produto atual (da URL)
+    const params = new URLSearchParams(window.location.search);
+    const idAtual = parseInt(params.get("id"), 10);
+
+    // Junta produtos com suas avaliações
+    const produtosComAvaliacoes = produtos.map(prod => {
+      const avs = avaliacoes.filter(a => a.produtoId === prod.id);
+      const media =
+        avs.length > 0
+          ? avs.reduce((soma, av) => soma + av.rating, 0) / avs.length
+          : 0;
+
+      return {
+        ...prod,
+        avaliacao: media,
+        totalAvaliacoes: avs.length
+      };
     });
 
-    if (!res.ok) throw new Error('Erro ao enviar avaliação');
+    // Filtra para não mostrar o produto atual
+    const produtosFiltrados = produtosComAvaliacoes.filter(
+      p => p.id !== idAtual
+    );
 
-    avaliacoes.push(novaAvaliacao);
-    mostrarAvaliacoes();
-    reviewForm.reset();
+    // Seleciona container
+    const container = document.querySelector('.products-container');
+    if (!container) return;
 
-  } catch (err) {
-    alert(err.message);
+    container.innerHTML = '';
+
+    // Pega produtos aleatórios
+    const produtosAleatorios = produtosFiltrados
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 9);
+
+    // Monta cards
+    produtosAleatorios.forEach(prd => {
+      const precoFinal = (prd.precoOriginal * (1 - (prd.desconto || 0) / 100))
+        .toFixed(2).replace('.', ',');
+
+      const precoOriginalFormatado = prd.precoOriginal
+        ? prd.precoOriginal.toFixed(2).replace('.', ',')
+        : '';
+
+      let estrelasHtml = '';
+      for (let i = 0; i < 5; i++) {
+        const diff = prd.avaliacao - i;
+        if (diff >= 1) estrelasHtml += '<i class="fa fa-star" style="color:#f39c12;"></i>';
+        else if (diff >= 0.5) estrelasHtml += '<i class="fa fa-star-half-o" style="color:#f39c12;"></i>';
+        else estrelasHtml += '<i class="fa fa-star-o" style="color:#ccc;"></i>';
+      }
+
+      container.innerHTML += `
+        <div class="product-card" tabindex="0" aria-label="${prd.nome}, preço R$${precoFinal}">
+          ${prd.desconto > 0 ? `<div class="product-discount">-${prd.desconto}%</div>` : ""}
+
+          <button class="favorite-btn" aria-label="Favoritar ${prd.nome}">
+            <i class="fa fa-heart-o"></i>
+          </button>
+
+          <a href="./mostruarioProduto.html?id=${prd.id}">
+            <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
+          
+
+          <div class="product-info">
+            <h3 class="product-name">${prd.nome}</h3>
+            <p class="product-description">${prd.descricao || ''}</p>
+
+            <div class="product-rating">
+              ${estrelasHtml}
+              <span class="rating-count">(${prd.totalAvaliacoes})</span>
+            </div>
+
+            <p class="product-price">
+              ${prd.desconto > 0 ? `<span class="price-original">R$ ${precoOriginalFormatado}</span>` : ""}
+              R$ <span class="price-final">${precoFinal}</span>
+            </p>
+            </a>
+            <button class="product-button" type="button">
+              <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
+            </button>
+          </div>
+        </div>
+      `;
+    });
+
+  } catch (error) {
+    console.error(error);
   }
-});
+}
+
+const reviewForm = document.getElementById('review-form');
+if (reviewForm) {
+  reviewForm.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const text = document.getElementById('review-text').value.trim();
+    const rating = parseInt(document.getElementById('review-rating').value);
+
+    if (!text || !rating) {
+      alert('Por favor, preencha o comentário e a nota.');
+      return;
+    }
+
+    const novaAvaliacao = {
+      produtoId: idDoProduto,
+      text,
+      rating,
+      author: "Usuário"
+    };
+
+    try {
+      const res = await fetch(API_AVALIACOES_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(novaAvaliacao),
+      });
+
+      if (!res.ok) throw new Error('Erro ao enviar avaliação');
+
+      avaliacoes.push(novaAvaliacao);
+      mostrarAvaliacoes();
+      reviewForm.reset();
+
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+}
 
 function trocarCategoria(categoria) {
   categoriaAtual = categoria;
@@ -164,23 +279,25 @@ function trocarCategoria(categoria) {
 
 // Zoom imagem
 const imgMain = document.querySelector('.product-main-image > img');
-imgMain.addEventListener('mousemove', e => {
-  const rect = imgMain.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+if (imgMain) {
+  imgMain.addEventListener('mousemove', e => {
+    const rect = imgMain.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-  const xPercent = (x / rect.width) * 100;
-  const yPercent = (y / rect.height) * 100;
+    const xPercent = (x / rect.width) * 100;
+    const yPercent = (y / rect.height) * 100;
 
-  imgMain.style.transformOrigin = `${xPercent}% ${yPercent}%`;
-  imgMain.style.transform = 'scale(1.5)';
-  imgMain.style.transition = 'transform 0.1s ease-out';
-});
-imgMain.addEventListener('mouseleave', () => {
-  imgMain.style.transformOrigin = 'center center';
-  imgMain.style.transform = 'scale(1)';
-  imgMain.style.transition = 'transform 0.3s ease-in';
-});
+    imgMain.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+    imgMain.style.transform = 'scale(1.5)';
+    imgMain.style.transition = 'transform 0.1s ease-out';
+  });
+  imgMain.addEventListener('mouseleave', () => {
+    imgMain.style.transformOrigin = 'center center';
+    imgMain.style.transform = 'scale(1)';
+    imgMain.style.transition = 'transform 0.3s ease-in';
+  });
+}
 
 // Carregar produto
 async function carregarProduto() {
@@ -202,26 +319,38 @@ async function carregarProduto() {
     }
 
     // Atualiza informações visuais
-    document.getElementById("img-produto-main").src = produto.imagem;
-    document.getElementById("img-produto-main").alt = produto.nome;
-    document.getElementById("nome-produto").textContent = produto.nome;
-    document.getElementById("descricao-produto").textContent = produto.descricao;
-    document.getElementById("img-box-img").src = produto.imagem;
-    document.getElementById("img-box-img").alt = produto.nome + " box image";
+    const imgMainEl = document.getElementById("img-produto-main");
+    if (imgMainEl) {
+      imgMainEl.src = produto.imagem;
+      imgMainEl.alt = produto.nome;
+    }
+    const nomeProdEl = document.getElementById("nome-produto");
+    if (nomeProdEl) nomeProdEl.textContent = produto.nome;
+    const descProdEl = document.getElementById("descricao-produto");
+    if (descProdEl) descProdEl.textContent = produto.descricao;
+    const imgBoxEl = document.getElementById("img-box-img");
+    if (imgBoxEl) {
+      imgBoxEl.src = produto.imagem;
+      imgBoxEl.alt = produto.nome + " box image";
+    }
 
     // Atualiza preços
     const precoOriginal = produto.precoOriginal;
     const precoComDesconto = precoOriginal * (1 - produto.desconto / 100);
 
-    document.getElementById("preco-original").textContent = `R$ ${precoOriginal.toFixed(2).replace('.', ',')}`;
-    document.getElementById("preco-com-desconto").textContent = `R$ ${precoComDesconto.toFixed(2).replace('.', ',')}`;
+    const precoOriginalEl = document.getElementById("preco-original");
+    if (precoOriginalEl) precoOriginalEl.textContent = `R$ ${precoOriginal.toFixed(2).replace('.', ',')}`;
+    const precoComDescEl = document.getElementById("preco-com-desconto");
+    if (precoComDescEl) precoComDescEl.textContent = `R$ ${precoComDesconto.toFixed(2).replace('.', ',')}`;
 
     const discountBadge = document.getElementById("discount-badge");
-    if (produto.desconto && produto.desconto > 0) {
-      discountBadge.textContent = `-${produto.desconto}%`;
-      discountBadge.style.display = "block";
-    } else {
-      discountBadge.style.display = "none";
+    if (discountBadge) {
+      if (produto.desconto && produto.desconto > 0) {
+        discountBadge.textContent = `-${produto.desconto}%`;
+        discountBadge.style.display = "block";
+      } else {
+        discountBadge.style.display = "none";
+      }
     }
 
     gerarBreadcrumb(produto);
@@ -234,4 +363,5 @@ async function carregarProduto() {
 window.addEventListener('DOMContentLoaded', () => {
   carregarProduto();
   carregarAvaliacoes();
+  carregarSessaoGostar();
 });

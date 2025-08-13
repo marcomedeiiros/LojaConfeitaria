@@ -26,5 +26,12 @@
     "rating": 5,
     "author": "Usuário",
     "id": 4
+  },
+  {
+    "produtoId": 7,
+    "text": "Delicioso comprarei mais!!",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 5
   }
 ]
