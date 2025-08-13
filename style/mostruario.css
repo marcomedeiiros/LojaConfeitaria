@@ -451,19 +451,23 @@ a {
 }
 
 .product-reviews {
-    max-width: 700px;
+    max-width: 1200px;
     margin: 80px auto 40px;
     padding: 100px;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 15px;
 }
 
 .product-reviews h3 {
-    text-align: center;
     font-weight: 700;
     font-size: 1.5rem;
+}
+
+.product-reviews hr {
+    border: none;
+    border-top: 2px solid #ccc;
 }
 
 .product-reviews form {
@@ -547,7 +551,7 @@ a {
 #breadcrumb {
     padding-top: 40px;
     font-size: 14px;
-    color: #555;    
+    color: #555;
     display: flex;
     margin-left: 32rem;
     gap: 10px;
@@ -570,87 +574,105 @@ a {
 
 
 .footer {
-  background: linear-gradient(90deg, #FF7BAC 0%, #8B5CF6 50%, #FFB347 100%);
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  padding: 40px 20px 20px;
-  font-size: 15px;
-  box-shadow: 0 -3px 8px rgba(0,0,0,0.15);
+    background: linear-gradient(90deg, #FF7BAC 0%, #8B5CF6 50%, #FFB347 100%);
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 40px 20px 20px;
+    font-size: 15px;
+    box-shadow: 0 -3px 8px rgba(0, 0, 0, 0.15);
 }
 
 .footer .container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .footer-section {
-  flex: 1 1 280px;
-  margin: 20px;
+    flex: 1 1 280px;
+    margin: 20px;
 }
 
 .footer-section h3,
 .footer-section h4 {
-  font-weight: 700;
-  margin-bottom: 18px;
-  text-shadow: 0 0 6px rgba(0,0,0,0.2);
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
 .footer-section h3 {
-  font-size: 26px;
+    font-size: 26px;
 }
 
 .footer-section p,
 .footer-section ul,
 .footer-section li,
 .footer-section a {
-  color: #f0e6f6dd; /* branco suave */
-  line-height: 1.7;
+    color: #f0e6f6dd;
+    /* branco suave */
+    line-height: 1.7;
 }
 
 .footer-section ul {
-  list-style: none;
-  padding: 0;
+    list-style: none;
+    padding: 0;
 }
 
 .footer-section ul li {
-  margin-bottom: 12px;
+    margin-bottom: 12px;
 }
 
 .footer-section ul li a {
-  color: #f0e6f6dd;
-  text-decoration: none;
-  transition: color 0.3s ease;
-  font-weight: 600;
+    color: #f0e6f6dd;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: 600;
 }
 
 .footer-section ul li a:hover {
-  color: #fff;
-  text-shadow: 0 0 4px #fff;
+    color: #fff;
+    text-shadow: 0 0 4px #fff;
 }
 
 .footer-bottom {
-  text-align: center;
-  padding: 20px 0 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.3);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: #eee;
-  text-shadow: 0 0 4px rgba(0,0,0,0.1);
+    text-align: center;
+    padding: 20px 0 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: #eee;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .socials a {
-  display: inline-block;
-  margin-right: 20px;
-  color: #f0e6f6dd;
-  font-size: 24px;
-  transition: color 0.3s ease;
+    display: inline-block;
+    margin-right: 20px;
+    color: #f0e6f6dd;
+    font-size: 24px;
+    transition: color 0.3s ease;
 }
 
 .socials a:hover {
-  color: #fff;
-  text-shadow: 0 0 8px #fff;
+    color: #fff;
+    text-shadow: 0 0 8px #fff;
+}
+
+.produtos-relacionados {
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto 3rem;
+}
+
+.produtos-relacionados h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.produtos-relacionados hr {
+    border: none;
+    border-top: 2px solid #ccc;
+    margin-bottom: 1.5rem;
 }
