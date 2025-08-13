@@ -7,12 +7,85 @@
     <title>Registro - Confeitaria M&H</title>
     <link rel="stylesheet" href="../style/registrar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
 </head>
 
 <body>
+    <div class="floating-cakes">
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+        <i class="fa-solid fa-cake-candles cake"></i>
+    </div>
 
+    <div class="register-container">
+        <div class="register-box">
+
+            <!-- Lado esquerdo com logo -->
+            <div class="register-left">
+                <a href="../page/index.html">
+                    <div class="logo-container">
+                        <i class="logo-icon fa-solid fa-cake-candles"></i>
+                        <h1 class="logo-text">Confeitaria M&H</h1>
+                    </div>
+                </a>
+                <div class="social-icons-left">
+                    <a href="https://www.facebook.com" target="_blank" class="facebook"><i
+                            class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" class="instagram"><i
+                            class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <!-- Lado direito com formulário -->
+            <div class="register-right">
+                <h2 class="register-title">Registrar-se</h2>
+                <form class="register-form">
+                    <div class="input-group">
+                        <label for="username" class="input-label">Nome de usuário</label>
+                        <input type="text" id="username" class="input-field" placeholder="Digite seu nome de usuário"
+                            required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email" class="input-label">E-mail</label>
+                        <input type="email" id="email" class="input-field" placeholder="Digite seu e-mail" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password" class="input-label">Senha</label>
+                        <input type="password" id="password" class="input-field" placeholder="Digite sua senha"
+                            required>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirm-password" class="input-label">Confirmar Senha</label>
+                        <input type="password" id="confirm-password" class="input-field"
+                            placeholder="Confirme sua senha" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone" class="input-label">Telefone</label>
+                        <input type="tel" id="phone" class="input-field" placeholder="(XX) XXXXX-XXXX" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="address" class="input-label">Endereço de entrega</label>
+                        <input type="text" id="address" class="input-field" placeholder="Rua, número, bairro, cidade"
+                            required>
+                    </div>
+
+                    <div class="terms">
+                        <label>
+                            <input type="checkbox" required> Aceito os <a href="termos.html">Termos de Uso</a> e a <a
+                                href="privacidade.html">Política de Privacidade</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="register-button">Registrar</button>
+                    <p class="login-text">Já tem conta? <a href="login.html">Entre aqui</a></p>
+                </form>
+            </div>
+
+        </div>
+    </div>
 </body>
 
 </html>

@@ -6,3 +6,261 @@
     box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
 }
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(90deg, #FF7BAC 0%, #8B5CF6 50%, #FFB347 100%);
+}
+
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.register-box {
+    display: flex;
+    width: 800px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.register-left,
+.register-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+}
+
+.logo-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+a {
+    text-decoration: none;
+}
+
+.logo-text {
+    font-size: 32px;
+}
+
+.separator {
+    width: 2px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.register-title {
+    color: #fff;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.register-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.input-label {
+    color: #fff;
+    margin-bottom: 5px;
+    align-self: flex-start;
+    margin-left: 10%;
+}
+
+.input-field {
+    padding: 8px 10px;
+    width: 80%;
+    max-width: 300px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.register-button {
+    padding: 8px 20px;
+    width: 50%;
+    background-color: #FFB347;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: block;
+    margin: 0 auto;
+}
+
+.register-button:hover {
+    background-color: #f39c12;
+}
+
+.login-text {
+    color: #fff;
+    font-size: 13px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.login-text a {
+    color: #FFB347;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-text a:hover {
+    color: #f39c12;
+    text-decoration: underline;
+}
+
+.terms {
+    width: 80%;
+    max-width: 300px;
+    margin: 10px auto;
+    color: #fff;
+    font-size: 13px;
+}
+
+.terms a {
+    color: #FFB347;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.terms a:hover {
+    color: #f39c12;
+    text-decoration: underline;
+}
+
+/* Ícones sociais esquerda */
+.social-icons-left {
+    display: flex;
+    gap: 35px;
+    margin-top: 20px;
+}
+
+.social-icons-left a.facebook {
+    background: linear-gradient(45deg, #1877F2, #0f4dc0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 28px;
+}
+
+.social-icons-left a.instagram {
+    background: linear-gradient(45deg, #f58529, #dd2a7b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 28px;
+}
+
+.social-icons-left a:hover {
+    opacity: 0.8;
+}
+
+/* Bolo flutuante (opcional) */
+.floating-cakes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.cake {
+    position: absolute;
+    font-size: 16px;
+    color: #fff;
+    opacity: 1;
+    top: 110vh;
+    animation: floatCake 6s linear infinite;
+}
+
+.cake:nth-child(1) {
+    left: 10%;
+    animation-duration: 5s;
+    animation-delay: 0s;
+    font-size: 18px;
+}
+
+.cake:nth-child(2) {
+    left: 25%;
+    animation-duration: 6s;
+    animation-delay: 1s;
+    font-size: 14px;
+}
+
+.cake:nth-child(3) {
+    left: 45%;
+    animation-duration: 5.5s;
+    animation-delay: 0.5s;
+    font-size: 16px;
+}
+
+.cake:nth-child(4) {
+    left: 65%;
+    animation-duration: 4.5s;
+    animation-delay: 1.2s;
+    font-size: 20px;
+}
+
+.cake:nth-child(5) {
+    left: 85%;
+    animation-duration: 6s;
+    animation-delay: 0.8s;
+    font-size: 15px;
+}
+
+@keyframes floatCake {
+    0% {
+        transform: translateX(0) translateY(0) rotate(0deg);
+    }
+
+    25% {
+        transform: translateX(10px) translateY(-35vh) rotate(90deg);
+    }
+
+    50% {
+        transform: translateX(-10px) translateY(-60vh) rotate(180deg);
+    }
+
+    75% {
+        transform: translateX(10px) translateY(-85vh) rotate(270deg);
+    }
+
+    100% {
+        transform: translateX(0) translateY(-120vh) rotate(360deg);
+    }
+}
