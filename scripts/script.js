@@ -162,7 +162,7 @@ function mostrarProdutos() {
       }
             R$ <span class="price-final">${precoFinal}</span>
           </p>
-           </a>
+           
 
           <div class="product-actions">
             <button class="edit-btn" data-id="${prd.id}">
@@ -174,8 +174,9 @@ function mostrarProdutos() {
           </div>
 
           <button class="product-button" type="button">
-            <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
+            <i class="fa fa-shopping-cart"></i> Comprar Agora
           </button>
+          </a>
         </div>
       </div>
     `;

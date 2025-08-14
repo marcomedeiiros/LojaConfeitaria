@@ -113,6 +113,17 @@ function fecharPopup(id) {
   setTimeout(() => popup.style.display = "none", 500);
 }
 
+function removerCarrinho(id) {
+  fetch(`http://localhost:3000/carrinho/${id}`, { method: 'DELETE' })
+    .then(res => {
+      if (!res.ok) throw new Error('Erro ao remover item do carrinho');
+      carrinho = carrinho.filter(item => item.id !== id);
+      atualizarListaCarrinho();
+      atualizarBadges();
+    })
+    .catch(err => console.error(err));
+}
+
 function atualizarListaCarrinho() {
   const listaElement = document.getElementById("lista-carrinho");
   if (!listaElement) return;
@@ -165,12 +176,6 @@ async function carregarFavoritos() {
     console.error(err);
     favoritos = [];
   }
-}
-
-function removerCarrinho(produtoId) {
-  carrinho = carrinho.filter(i => i.id !== produtoId);
-  atualizarBadges();
-  atualizarListaCarrinho();
 }
 
 function alterarQuantidade(produtoId, delta) {

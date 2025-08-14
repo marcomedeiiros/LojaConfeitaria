@@ -8,6 +8,10 @@
   <link rel="stylesheet" href="../style/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-papjYTVz3Hft+zP2Vw8kzVquh5C0IugvK1k/3C+FjJf+5l9h7L7P6RQ3PzV4HBwPiR35TP2N3+I7Jr5wD8Z8fQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
   <title>Inicio - Confeitaria M&H</title>
 </head>
@@ -29,10 +33,6 @@
       <div class="icon-wrapper" tabindex="0" role="button" title="Favoritos">
         <i class="fa-solid fa-heart"></i>
         <span class="icon-badge" id="badge-favoritos">0</span>
-      </div>
-      <div class="icon-wrapper" tabindex="0" role="button" title="Carrinho">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span class="icon-badge" id="badge-carrinho">0</span>
       </div>
       <div class="icon-wrapper" tabindex="0" role="button" title="Perfil">
         <i class="fa-solid fa-user"></i>
@@ -78,20 +78,29 @@
 
       <div class="carousel-content">
         <div class="slide active">
-          <h2>Promoção de Inauguração 🍩</h2>
-          <p>Até 20% de desconto nos doces mais pedidos</p>
+          <h2>Promoção de Inauguração <i class="fa-solid fa-bullhorn"></i></h2>
+          <p>Até 20% de desconto nos doces mais pedidos!</p>
         </div>
         <div class="slide">
-          <h2>Novos Sabores Chegando! 🍫</h2>
-          <p>Experimente nossas novidades deliciosas</p>
+          <h2>Novos Sabores Chegando <i class="fa-solid fa-ice-cream"></i></h2>
+          <p>Experimente nossas novidades deliciosas!</p>
         </div>
         <div class="slide">
-          <h2>Frete Grátis Hoje! 🚚</h2>
-          <p>Em pedidos acima de R$50,00</p>
+          <h2>Frete Grátis Hoje! <i class="fa-solid fa-truck-fast"></i></h2>
+          <p>Em pedidos acima de R$50,00!</p>
         </div>
       </div>
 
       <button class="arrow right-arrow" aria-label="Próximo">&#10095;</button>
+    </div>
+
+    <div class="floating-donuts">
+      <i class="fa-solid fa-cake-candles"></i>
+      <i class="fa-solid fa-ice-cream"></i>
+      <i class="fa-solid fa-cookie"></i>
+      <i class="fa-solid fa-cake-candles"></i>
+      <i class="fa-solid fa-ice-cream"></i>
+      <i class="fa-solid fa-cookie"></i>
     </div>
   </section>
 
@@ -107,7 +116,6 @@
       </select>
     </div>
 
-    
     <div class="products-container"></div>
   </main>
 
@@ -131,7 +139,7 @@
           <option value="cookies">Cookies</option>
           <option value="doces gelados">Doces Gelados</option>
         </select>
-        
+
         <label for="preco">Preço (R$):</label>
         <input type="number" id="preco" name="preco" min="0" step="0.01" required placeholder="Ex: 49.90"
           autocomplete="off" />
@@ -145,7 +153,6 @@
 
         <label for="desconto">Desconto (%)</label>
         <input type="number" id="desconto" name="desconto" min="0" max="100" value="0" />
-
 
         <div class="form-buttons">
           <button type="submit" class="btn-primary">Adicionar</button>

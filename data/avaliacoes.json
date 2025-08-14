@@ -40,5 +40,12 @@
     "rating": 5,
     "author": "Usuário",
     "id": 6
+  },
+  {
+    "produtoId": 9,
+    "text": "muito bom!",
+    "rating": 5,
+    "author": "Usuário",
+    "id": 7
   }
 ]

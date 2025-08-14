@@ -30,10 +30,42 @@ app.get('/carrinho', (req, res) => {
 });
 
 app.post('/carrinho', (req, res) => {
-  const novoCarrinho = { data: req.body }; 
+  const novoCarrinho = { data: req.body };
   fs.writeFile(arquivoCarrinho, JSON.stringify(novoCarrinho, null, 2), (err) => {
     if (err) return res.status(500).json({ erro: 'Erro ao salvar carrinho' });
     res.json({ status: 'ok' });
+  });
+});
+
+app.delete('/carrinho/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+
+  fs.readFile(arquivoCarrinho, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.status(404).json({ erro: 'Carrinho vazio' });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo carrinho' });
+    }
+
+    let carrinhoAtual;
+    try {
+      const parsed = JSON.parse(data);
+      carrinhoAtual = parsed.data || [];
+    } catch {
+      carrinhoAtual = [];
+    }
+
+    // Filtra o item pelo id
+    const novoCarrinho = carrinhoAtual.filter(item => item.id !== id);
+
+    if (novoCarrinho.length === carrinhoAtual.length) {
+      return res.status(404).json({ erro: 'Item não encontrado no carrinho' });
+    }
+
+    // Salva de volta no arquivo mantendo a chave "data"
+    fs.writeFile(arquivoCarrinho, JSON.stringify({ data: novoCarrinho }, null, 2), (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao salvar carrinho' });
+      res.status(200).json({ status: 'ok' });
+    });
   });
 });
 
@@ -147,7 +179,7 @@ app.put('/produtos/:id', (req, res) => {
 app.get('/avaliacoes', (req, res) => {
   fs.readFile(arquivoAvaliacoes, 'utf8', (err, data) => {
     if (err) {
-      if (err.code === 'ENOENT') return res.json([]); 
+      if (err.code === 'ENOENT') return res.json([]);
       console.error('Erro ao ler arquivo avaliações:', err);
       return res.status(500).json({ erro: 'Erro ao ler arquivo avaliações' });
     }
