@@ -1,0 +1,37 @@
+{
+  "data": [
+    {
+      "id": 7,
+      "nome": "Sonho",
+      "categoria": "bolos",
+      "preco": 5.85,
+      "precoOriginal": 9,
+      "desconto": 35,
+      "imagem": "https://lirp.cdn-website.com/33406c6e/dms3rep/multi/opt/Untitled-1-1920w.jpg",
+      "descricao": "Sonho feito com recheio de creme da casa cremoso!",
+      "quantidade": 1
+    },
+    {
+      "nome": "Pudim",
+      "categoria": "bolos",
+      "preco": 28.72,
+      "precoOriginal": 35.9,
+      "desconto": 20,
+      "imagem": "https://s2-receitas.glbimg.com/jK-kMTPr3Yzex9P93zqt4DSsFXo=/0x0:1366x768/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_1f540e0b94d8437dbbc39d567a1dee68/internal_photos/bs/2023/z/0/RsipkzTEu0Y1PGiavCpA/pudim-de-leite-condensado.jpg",
+      "descricao": "Pudim com calda de açúcar feito em casa!",
+      "id": 9,
+      "quantidade": 1
+    },
+    {
+      "nome": "Morango do Amor",
+      "categoria": "doces gelados",
+      "preco": 26.32,
+      "precoOriginal": 32.9,
+      "desconto": 20,
+      "imagem": "https://img.olx.com.br/images/48/486593542062062.webp",
+      "descricao": "Morango do amor feito com morango e cobertura de açucar",
+      "id": 8,
+      "quantidade": 1
+    }
+  ]
+}

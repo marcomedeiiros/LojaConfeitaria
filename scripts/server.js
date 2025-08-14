@@ -8,13 +8,58 @@ const PORT = 3000;
 
 const arquivoProdutos = path.join(__dirname, '../data/produtos.json');
 const arquivoAvaliacoes = path.join(__dirname, '../data/avaliacoes.json');
+const arquivoCarrinho = path.join(__dirname, '../data/carrinho.json');
+const arquivoFavoritos = path.join(__dirname, '../data/favoritos.json');
 
 app.use(cors());
 app.use(express.json());
 
-// --- Produtos ---
+app.get('/carrinho', (req, res) => {
+  fs.readFile(arquivoCarrinho, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.json({ data: [] });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo carrinho' });
+    }
+    try {
+      const carrinho = JSON.parse(data);
+      res.json(carrinho);
+    } catch {
+      res.json({ data: [] });
+    }
+  });
+});
 
-// GET todos os produtos
+app.post('/carrinho', (req, res) => {
+  const novoCarrinho = { data: req.body }; 
+  fs.writeFile(arquivoCarrinho, JSON.stringify(novoCarrinho, null, 2), (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao salvar carrinho' });
+    res.json({ status: 'ok' });
+  });
+});
+
+app.get('/favoritos', (req, res) => {
+  fs.readFile(arquivoFavoritos, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.json({ data: [] });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo favoritos' });
+    }
+    try {
+      const favoritos = JSON.parse(data);
+      res.json(favoritos);
+    } catch {
+      res.json({ data: [] });
+    }
+  });
+});
+
+app.post('/favoritos', (req, res) => {
+  const novosFavoritos = { data: req.body };
+  fs.writeFile(arquivoFavoritos, JSON.stringify(novosFavoritos, null, 2), (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos' });
+    res.json({ status: 'ok' });
+  });
+});
+
 app.get('/produtos', (req, res) => {
   fs.readFile(arquivoProdutos, 'utf8', (err, data) => {
     if (err) {
@@ -25,7 +70,6 @@ app.get('/produtos', (req, res) => {
   });
 });
 
-// POST novo produto
 app.post('/produtos', (req, res) => {
   const novoProduto = req.body;
 
@@ -49,7 +93,6 @@ app.post('/produtos', (req, res) => {
   });
 });
 
-// DELETE produto
 app.delete('/produtos/:id', (req, res) => {
   const id = parseInt(req.params.id);
 
@@ -75,7 +118,6 @@ app.delete('/produtos/:id', (req, res) => {
   });
 });
 
-// PUT editar produto
 app.put('/produtos/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const produtoAtualizado = req.body;
@@ -102,13 +144,10 @@ app.put('/produtos/:id', (req, res) => {
   });
 });
 
-// --- Avaliações ---
-
-// GET todas as avaliações
 app.get('/avaliacoes', (req, res) => {
   fs.readFile(arquivoAvaliacoes, 'utf8', (err, data) => {
     if (err) {
-      if (err.code === 'ENOENT') return res.json([]); // arquivo não existe
+      if (err.code === 'ENOENT') return res.json([]); 
       console.error('Erro ao ler arquivo avaliações:', err);
       return res.status(500).json({ erro: 'Erro ao ler arquivo avaliações' });
     }
@@ -122,7 +161,6 @@ app.get('/avaliacoes', (req, res) => {
   });
 });
 
-// POST nova avaliação
 app.post('/avaliacoes', (req, res) => {
   const novaAvaliacao = req.body;
 

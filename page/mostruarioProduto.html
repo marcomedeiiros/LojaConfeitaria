@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="../style/mostruario.css" />
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <title>Mostruário Produto - Confeitaria M&H</title>
@@ -76,7 +77,7 @@
 
     <section class="product-details">
         <aside class="product-thumbs" id="product-thumbs">
-            <!-- Miniaturas vão aqui -->
+
         </aside>
 
         <div class="product-main-image">
@@ -191,6 +192,31 @@
             <p>© 2026 - Confeitaria M&H. Todos os Direitos Reservados.</p>
         </div>
     </footer>
+
+    <!-- POPUP FAVORITOS -->
+    <div id="popup-favoritos" class="popup">
+        <div class="popup-content">
+            <h2>Favoritos</h2>
+            <ul id="lista-favoritos"></ul>
+
+            <div class="popup-botoes">
+                <button class="popup-close" data-target="popup-favoritos">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP CARRINHO -->
+    <div id="popup-carrinho" class="popup">
+        <div class="popup-content">
+            <h2>Carrinho</h2>
+            <ul id="lista-carrinho"></ul>
+
+            <div class="popup-botoes">
+                <button class="btn-finalizar">Finalizar Compra</button>
+                <button class="popup-fechar" data-target="popup-carrinho">Fechar</button>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="../scripts/mostruario.js"></script>
 

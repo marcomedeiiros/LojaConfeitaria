@@ -28,7 +28,7 @@ body {
     line-height: 1.6;
 }
 
-/* Cabeçalho */
+
 header {
     background-color: var(--white-color);
     position: sticky;
@@ -125,7 +125,6 @@ header {
     cursor: pointer;
 }
 
-/* Categorias */
 .categories-container {
     background: linear-gradient(90deg, #FF7BAC 0%, #8B5CF6 50%, #FFB347 100%);
 }
@@ -183,7 +182,6 @@ header {
     transform: translateY(2px);
 }
 
-/* Banner */
 .hero-section {
     background: linear-gradient(90deg, #FF7BAC 0%, #8B5CF6 50%, #FFB347 100%);
     color: white;
@@ -252,7 +250,6 @@ header {
     right: 10px;
 }
 
-/* Produtos */
 .products {
     width: 100%;
     max-width: 1200px;
@@ -482,7 +479,6 @@ a {
     background-color: var(--primary-color);
 }
 
-/* Card do botão "Adicionar Produto" */
 .add-product-card {
     display: flex;
     justify-content: center;
@@ -518,7 +514,6 @@ a {
     margin-top: 0.3rem;
 }
 
-/* Modal do formulário */
 #modalAddProduto {
     display: none;
     position: fixed;
@@ -636,7 +631,7 @@ a {
 .footer-section ul,
 .footer-section li,
 .footer-section a {
-  color: #f0e6f6dd; /* branco suave */
+  color: #f0e6f6dd; 
   line-height: 1.7;
 }
 

@@ -162,7 +162,6 @@ a {
     text-decoration: underline;
 }
 
-/* Ícones sociais esquerda */
 .social-icons-left {
     display: flex;
     gap: 35px;
@@ -187,7 +186,6 @@ a {
     opacity: 0.8;
 }
 
-/* Bolo flutuante (opcional) */
 .floating-cakes {
     position: absolute;
     top: 0;

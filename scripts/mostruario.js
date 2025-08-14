@@ -1,28 +1,238 @@
 let avaliacoes = [];
+let favoritos = [];
+let carrinho = [];
+let produtos = []; 
+
 const todosBotoes = document.querySelectorAll(".category-btn");
 
 const API_PRODUTOS_URL = "http://localhost:3000/produtos";
 const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes";
 
+const badgeFavoritos = document.getElementById("badge-favoritos");
+const badgeCarrinho = document.getElementById("badge-carrinho");
+
+function atualizarBadges() {
+  badgeFavoritos.textContent = favoritos.length;
+  badgeCarrinho.textContent = carrinho.length;
+}
+
+atualizarBadges();
+
+document.addEventListener("click", (e) => {
+
+  if (e.target.closest(".favorite-btn")) {
+    const btn = e.target.closest(".favorite-btn");
+    const icon = btn.querySelector("i");
+    const produtoId = Number(btn.closest(".product-card").getAttribute("data-id"));
+
+    if (!btn.classList.contains("favoritado")) {
+      btn.classList.add("favoritado");
+      icon.classList.remove("fa-heart-o");
+      icon.classList.add("fa-heart");
+      icon.style.color = "red";
+
+      favoritos.push(produtoId);  
+      mostrarPopup("Adicionado aos favoritos");
+    } else {
+      btn.classList.remove("favoritado");
+      icon.classList.remove("fa-heart");
+      icon.classList.add("fa-heart-o");
+      icon.style.color = "";
+
+      favoritos = favoritos.filter(f => f !== produtoId); 
+      mostrarPopup("Removido dos favoritos");
+    }
+
+    atualizarBadges();
+    atualizarLista("popup-favoritos");
+    salvarFavoritosServidor(); 
+  }
+
+  if (e.target.closest(".product-button")) {
+    const produtoId = Number(e.target.closest(".product-card").getAttribute("data-id"));
+    const produto = produtos.find(p => p.id === produtoId);
+    if (produto) {
+
+      let itemCarrinho = carrinho.find(p => p.id === produto.id);
+      if (itemCarrinho) {
+        itemCarrinho.quantidade = (itemCarrinho.quantidade || 1) + 1;
+      } else {
+        carrinho.push({ ...produto, quantidade: 1 });
+      }
+      atualizarBadges();
+      atualizarListaCarrinho();
+      salvarCarrinhoServidor();
+      mostrarPopup("Produto adicionado ao carrinho");
+    }
+  }
+});
+
+function mostrarPopup(mensagem) {
+  let popup = document.createElement("div");
+  popup.textContent = mensagem;
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.background = "#fff";
+  popup.style.padding = "15px 25px";
+  popup.style.borderRadius = "10px";
+  popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+  popup.style.fontSize = "16px";
+  popup.style.zIndex = "9999";
+  document.body.appendChild(popup);
+
+  setTimeout(() => popup.remove(), 1500);
+}
+
+function adicionarFavorito(item) {
+  if (!favoritos.includes(item)) favoritos.push(item);
+  atualizarBadges();
+  atualizarLista("popup-favoritos");
+}
+
+function adicionarCarrinho(item) {
+  carrinho.push(item);
+  atualizarBadges();
+  atualizarListaCarrinho();
+}
+
+function abrirPopup(id) {
+  const popup = document.getElementById(id);
+  if (!popup) return;
+  popup.style.display = "flex";
+  setTimeout(() => popup.classList.add("ativo"), 10);
+  if (id === "popup-carrinho") atualizarListaCarrinho();
+  else atualizarLista(id);
+}
+
+function fecharPopup(id) {
+  const popup = document.getElementById(id);
+  if (!popup) return;
+  popup.classList.remove("ativo");
+  setTimeout(() => popup.style.display = "none", 500);
+}
+
+function atualizarListaCarrinho() {
+  const listaElement = document.getElementById("lista-carrinho");
+  if (!listaElement) return;
+
+  listaElement.innerHTML = "";
+  if (carrinho.length === 0) {
+    listaElement.innerHTML = "<li>Nenhum item adicionado</li>";
+    return;
+  }
+
+  carrinho.forEach(item => {
+    const precoComDesconto = (
+      item.precoOriginal * (1 - (item.desconto || 0) / 100) * item.quantidade
+    ).toFixed(2).replace('.', ',');
+
+
+    listaElement.innerHTML += `
+      <li style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${item.imagem}" alt="${item.nome}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+              <div>
+                  <strong>${item.nome}</strong><br>
+                  R$ ${precoComDesconto} ${item.desconto > 0 ? `<span style="color:red;">(-${item.desconto}%)</span>` : ""}
+              </div>
+          </div>
+          <div class="carrinho-controles">
+              <button onclick="alterarQuantidade(${item.id}, -1)">-</button>
+              <span>${item.quantidade}</span>
+              <button onclick="alterarQuantidade(${item.id}, 1)">+</button>
+              <button onclick="removerCarrinho(${item.id})">
+              <i class="fa-solid fa-trash"></i>
+              </button>
+          </div>
+      </li>
+    `;
+  });
+}
+
+async function carregarFavoritos() {
+  try {
+    const res = await fetch('http://localhost:3000/favoritos');
+    if (!res.ok) throw new Error('Erro ao carregar favoritos');
+    const json = await res.json();
+
+    favoritos = Array.isArray(json) ? json : [];
+
+    atualizarBadges();
+    atualizarLista("popup-favoritos");
+  } catch (err) {
+    console.error(err);
+    favoritos = [];
+  }
+}
+
+function removerCarrinho(produtoId) {
+  carrinho = carrinho.filter(i => i.id !== produtoId);
+  atualizarBadges();
+  atualizarListaCarrinho();
+}
+
+function alterarQuantidade(produtoId, delta) {
+  const item = carrinho.find(i => i.id === produtoId);
+  if (!item) return;
+  item.quantidade = (item.quantidade || 1) + delta;
+  if (item.quantidade < 1) item.quantidade = 1;
+  atualizarBadges();
+  atualizarListaCarrinho();
+  salvarCarrinhoServidor(); 
+}
+
+function salvarCarrinhoServidor() {
+  fetch('http://localhost:3000/carrinho', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(carrinho)
+  })
+    .then(res => res.json())
+    .then(() => console.log('Carrinho salvo no servidor'))
+    .catch(err => console.error('Erro ao salvar carrinho:', err));
+}
+
+function salvarFavoritosServidor() {
+  fetch('http://localhost:3000/favoritos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(favoritos) 
+  })
+    .then(res => res.json())
+    .then(() => console.log('Favoritos salvos no servidor'))
+    .catch(err => console.error('Erro ao salvar favoritos:', err));
+}
+
+document.querySelector('[title="Favoritos"]').addEventListener("click", () => abrirPopup("popup-favoritos"));
+document.querySelector('[title="Carrinho"]').addEventListener("click", () => abrirPopup("popup-carrinho"));
+
+document.querySelectorAll(".popup-fechar").forEach(btn => {
+  btn.addEventListener("click", (e) => fecharPopup(e.target.getAttribute("data-target")));
+});
+
+document.querySelectorAll(".popup-close").forEach(btn => {
+  btn.addEventListener("click", (e) => fecharPopup(e.target.getAttribute("data-target")));
+});
+
 const params = new URLSearchParams(window.location.search);
 const idDoProduto = Number(params.get('id')) || 0;
-const categoria = params.get('categoria') || '';
-const produtoId = params.get("id"); 
 
 function gerarBreadcrumb(produto) {
   const breadcrumbEl = document.getElementById("breadcrumb");
   if (!breadcrumbEl) return;
   breadcrumbEl.innerHTML = `
-    <a href="index.html">Home</a> &gt;
-    <a href="index.html?categoria=${encodeURIComponent(produto.categoria)}">${produto.categoria}</a> &gt;
-    <span>${produto.nome}</span>
-  `;
+        <a href="index.html">Home</a> &gt;
+        <a href="index.html?categoria=${encodeURIComponent(produto.categoria)}">${produto.categoria}</a> &gt;
+        <span>${produto.nome}</span>
+    `;
 }
 
-// Busca título via API + gera breadcrumb
 fetch(API_PRODUTOS_URL)
   .then(res => res.json())
-  .then(produtos => {
+  .then(resProdutos => {
+    produtos = resProdutos; 
     const produto = produtos.find(p => p.id == idDoProduto);
     if (produto) {
       gerarBreadcrumb(produto);
@@ -32,31 +242,27 @@ fetch(API_PRODUTOS_URL)
     }
   });
 
-// Pega parâmetro na URL (função extra que você tinha)
-function getParameterByName(name) {
-  const url = window.location.href;
-  name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-  const results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+async function carregarCarrinho() {
+  const res = await fetch('http://localhost:3000/carrinho');
+  const json = await res.json();
+  carrinho = json.data || [];
+  atualizarListaCarrinho();
 }
 
 function mostrarAvaliacoes() {
   const container = document.getElementById('reviews-container');
-  if (!container) return;  // Segurança extra
+  if (!container) return;
 
   container.innerHTML = '';
-
   const avaliacoesDoProduto = avaliacoes.filter(av => av.produtoId == idDoProduto);
   const numeroAvaliacoes = avaliacoesDoProduto.length;
 
+  const estrelasEl = document.getElementById('estrelas-avaliacao');
+  const numeroEl = document.getElementById('numero-avaliacoes');
+  const linkOpinioesEl = document.getElementById('link-opinioes');
+
   if (numeroAvaliacoes === 0) {
     container.innerHTML = '<p>Seja o primeiro a avaliar este produto!</p>';
-    const numeroEl = document.getElementById('numero-avaliacoes');
-    const estrelasEl = document.getElementById('estrelas-avaliacao');
-    const linkOpinioesEl = document.getElementById('link-opinioes');
     if (numeroEl) numeroEl.textContent = '0';
     if (estrelasEl) estrelasEl.innerHTML = '☆☆☆☆☆';
     if (linkOpinioesEl) linkOpinioesEl.textContent = '0 OPINIÕES';
@@ -65,26 +271,14 @@ function mostrarAvaliacoes() {
 
   const somaNotas = avaliacoesDoProduto.reduce((acc, av) => acc + av.rating, 0);
   const media = somaNotas / numeroAvaliacoes;
-
   const estrelasCheias = Math.floor(media);
   const temMeiaEstrela = (media - estrelasCheias) >= 0.5;
   const estrelasVazias = 5 - estrelasCheias - (temMeiaEstrela ? 1 : 0);
 
   let estrelasHtml = '';
-  for (let i = 0; i < estrelasCheias; i++) {
-    estrelasHtml += '<span style="color:#f39c12;">★</span>';
-  }
-  if (temMeiaEstrela) {
-    // Usar uma meia estrela real seria ideal, mas como você usa '☆' para meia, mantive.
-    estrelasHtml += '<span style="color:#f39c12;">☆</span>';
-  }
-  for (let i = 0; i < estrelasVazias; i++) {
-    estrelasHtml += '<span style="color:#ccc;">☆</span>';
-  }
-
-  const estrelasEl = document.getElementById('estrelas-avaliacao');
-  const numeroEl = document.getElementById('numero-avaliacoes');
-  const linkOpinioesEl = document.getElementById('link-opinioes');
+  for (let i = 0; i < estrelasCheias; i++) estrelasHtml += '<span style="color:#f39c12;">★</span>';
+  if (temMeiaEstrela) estrelasHtml += '<span style="color:#f39c12;">☆</span>';
+  for (let i = 0; i < estrelasVazias; i++) estrelasHtml += '<span style="color:#ccc;">☆</span>';
 
   if (estrelasEl) estrelasEl.innerHTML = estrelasHtml;
   if (numeroEl) numeroEl.textContent = numeroAvaliacoes;
@@ -97,15 +291,14 @@ function mostrarAvaliacoes() {
     div.style.borderBottom = '1px solid #ccc';
     div.style.padding = '10px 0';
     div.innerHTML = `
-      <div><strong>${av.author || "Anônimo"}</strong></div>
-      <div style="color: #f39c12;">${stars}</div>
-      <div>${av.text}</div>
-    `;
+            <div><strong>${av.author || "Anônimo"}</strong></div>
+            <div style="color: #f39c12;">${stars}</div>
+            <div>${av.text}</div>
+        `;
     container.appendChild(div);
   });
 }
 
-// Busca avaliações do backend
 async function carregarAvaliacoes() {
   try {
     const res = await fetch(API_AVALIACOES_URL);
@@ -121,62 +314,34 @@ async function carregarAvaliacoes() {
 
 async function carregarSessaoGostar() {
   try {
-    // Busca produtos e avaliações
     const [resProdutos, resAvaliacoes] = await Promise.all([
       fetch(API_PRODUTOS_URL),
       fetch(API_AVALIACOES_URL)
     ]);
 
-    if (!resProdutos.ok || !resAvaliacoes.ok) {
-      throw new Error('Erro ao carregar dados.');
-    }
+    if (!resProdutos.ok || !resAvaliacoes.ok) throw new Error('Erro ao carregar dados.');
 
-    const produtos = await resProdutos.json();
-    const avaliacoes = await resAvaliacoes.json();
+    const produtosResp = await resProdutos.json();
+    produtos = produtosResp; 
+    const avaliacoesData = await resAvaliacoes.json();
 
-    // ID do produto atual (da URL)
-    const params = new URLSearchParams(window.location.search);
     const idAtual = parseInt(params.get("id"), 10);
-
-    // Junta produtos com suas avaliações
     const produtosComAvaliacoes = produtos.map(prod => {
-      const avs = avaliacoes.filter(a => a.produtoId === prod.id);
-      const media =
-        avs.length > 0
-          ? avs.reduce((soma, av) => soma + av.rating, 0) / avs.length
-          : 0;
-
-      return {
-        ...prod,
-        avaliacao: media,
-        totalAvaliacoes: avs.length
-      };
+      const avs = avaliacoesData.filter(a => a.produtoId === prod.id);
+      const media = avs.length > 0 ? avs.reduce((s, a) => s + a.rating, 0) / avs.length : 0;
+      return { ...prod, avaliacao: media, totalAvaliacoes: avs.length };
     });
 
-    // Filtra para não mostrar o produto atual
-    const produtosFiltrados = produtosComAvaliacoes.filter(
-      p => p.id !== idAtual
-    );
-
-    // Seleciona container
+    const produtosFiltrados = produtosComAvaliacoes.filter(p => p.id !== idAtual);
     const container = document.querySelector('.products-container');
     if (!container) return;
 
     container.innerHTML = '';
+    const produtosAleatorios = produtosFiltrados.sort(() => Math.random() - 0.5).slice(0, 9);
 
-    // Pega produtos aleatórios
-    const produtosAleatorios = produtosFiltrados
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 9);
-
-    // Monta cards
     produtosAleatorios.forEach(prd => {
-      const precoFinal = (prd.precoOriginal * (1 - (prd.desconto || 0) / 100))
-        .toFixed(2).replace('.', ',');
-
-      const precoOriginalFormatado = prd.precoOriginal
-        ? prd.precoOriginal.toFixed(2).replace('.', ',')
-        : '';
+      const precoFinal = (prd.precoOriginal * (1 - (prd.desconto || 0) / 100)).toFixed(2).replace('.', ',');
+      const precoOriginalFormatado = prd.precoOriginal ? prd.precoOriginal.toFixed(2).replace('.', ',') : '';
 
       let estrelasHtml = '';
       for (let i = 0; i < 5; i++) {
@@ -187,37 +352,24 @@ async function carregarSessaoGostar() {
       }
 
       container.innerHTML += `
-        <div class="product-card" tabindex="0" aria-label="${prd.nome}, preço R$${precoFinal}">
-          ${prd.desconto > 0 ? `<div class="product-discount">-${prd.desconto}%</div>` : ""}
-
-          <button class="favorite-btn" aria-label="Favoritar ${prd.nome}">
-            <i class="fa fa-heart-o"></i>
-          </button>
-
-          <a href="./mostruarioProduto.html?id=${prd.id}">
-            <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
-          
-
-          <div class="product-info">
-            <h3 class="product-name">${prd.nome}</h3>
-            <p class="product-description">${prd.descricao || ''}</p>
-
-            <div class="product-rating">
-              ${estrelasHtml}
-              <span class="rating-count">(${prd.totalAvaliacoes})</span>
-            </div>
-
-            <p class="product-price">
-              ${prd.desconto > 0 ? `<span class="price-original">R$ ${precoOriginalFormatado}</span>` : ""}
-              R$ <span class="price-final">${precoFinal}</span>
-            </p>
-            </a>
-            <button class="product-button" type="button">
-              <i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho
-            </button>
-          </div>
-        </div>
-      `;
+                <div class="product-card" tabindex="0" aria-label="${prd.nome}, preço R$${precoFinal}" data-id="${prd.id}">
+                    ${prd.desconto > 0 ? `<div class="product-discount">-${prd.desconto}%</div>` : ""}
+                    <button class="favorite-btn" aria-label="Favoritar ${prd.nome}"><i class="fa fa-heart-o"></i></button>
+                    <a href="./mostruarioProduto.html?id=${prd.id}">
+                        <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
+                        <div class="product-info">
+                            <h3 class="product-name">${prd.nome}</h3>
+                            <p class="product-description">${prd.descricao || ''}</p>
+                            <div class="product-rating">${estrelasHtml}<span class="rating-count">(${prd.totalAvaliacoes})</span></div>
+                            <p class="product-price">
+                                ${prd.desconto > 0 ? `<span class="price-original">R$ ${precoOriginalFormatado}</span>` : ""}
+                                R$ <span class="price-final">${precoFinal}</span>
+                            </p>
+                        </div>
+                    </a>
+                    <button class="product-button" type="button"><i class="fa fa-shopping-cart"></i> Adicionar ao Carrinho</button>
+                </div>
+            `;
     });
 
   } catch (error) {
@@ -229,21 +381,11 @@ const reviewForm = document.getElementById('review-form');
 if (reviewForm) {
   reviewForm.addEventListener('submit', async e => {
     e.preventDefault();
-
     const text = document.getElementById('review-text').value.trim();
     const rating = parseInt(document.getElementById('review-rating').value);
+    if (!text || !rating) return alert('Por favor, preencha o comentário e a nota.');
 
-    if (!text || !rating) {
-      alert('Por favor, preencha o comentário e a nota.');
-      return;
-    }
-
-    const novaAvaliacao = {
-      produtoId: idDoProduto,
-      text,
-      rating,
-      author: "Usuário"
-    };
+    const novaAvaliacao = { produtoId: idDoProduto, text, rating, author: "Usuário" };
 
     try {
       const res = await fetch(API_AVALIACOES_URL, {
@@ -258,36 +400,18 @@ if (reviewForm) {
       mostrarAvaliacoes();
       reviewForm.reset();
 
-    } catch (err) {
-      alert(err.message);
-    }
+    } catch (err) { alert(err.message); }
   });
 }
 
-function trocarCategoria(categoria) {
-  categoriaAtual = categoria;
-
-  todosBotoes.forEach((botao) => {
-    botao.classList.remove("active");
-    if (botao.getAttribute("data-category") === categoria) {
-      botao.classList.add("active");
-    }
-  });
-
-  mostrarProdutos();
-}
-
-// Zoom imagem
 const imgMain = document.querySelector('.product-main-image > img');
 if (imgMain) {
   imgMain.addEventListener('mousemove', e => {
     const rect = imgMain.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
     const xPercent = (x / rect.width) * 100;
     const yPercent = (y / rect.height) * 100;
-
     imgMain.style.transformOrigin = `${xPercent}% ${yPercent}%`;
     imgMain.style.transform = 'scale(1.5)';
     imgMain.style.transition = 'transform 0.1s ease-out';
@@ -299,69 +423,49 @@ if (imgMain) {
   });
 }
 
-// Carregar produto
 async function carregarProduto() {
-  if (!idDoProduto) {
-    alert("Produto não especificado.");
-    return;
-  }
+  if (!idDoProduto) return alert("Produto não especificado.");
 
   try {
     const res = await fetch(API_PRODUTOS_URL);
     if (!res.ok) throw new Error("Erro ao carregar produtos.");
 
-    const produtos = await res.json();
+    produtos = await res.json();
     const produto = produtos.find(p => p.id == idDoProduto);
+    if (!produto) return alert("Produto não encontrado.");
 
-    if (!produto) {
-      alert("Produto não encontrado.");
-      return;
-    }
-
-    // Atualiza informações visuais
     const imgMainEl = document.getElementById("img-produto-main");
-    if (imgMainEl) {
-      imgMainEl.src = produto.imagem;
-      imgMainEl.alt = produto.nome;
-    }
+    if (imgMainEl) { imgMainEl.src = produto.imagem; imgMainEl.alt = produto.nome; }
     const nomeProdEl = document.getElementById("nome-produto");
     if (nomeProdEl) nomeProdEl.textContent = produto.nome;
     const descProdEl = document.getElementById("descricao-produto");
     if (descProdEl) descProdEl.textContent = produto.descricao;
     const imgBoxEl = document.getElementById("img-box-img");
-    if (imgBoxEl) {
-      imgBoxEl.src = produto.imagem;
-      imgBoxEl.alt = produto.nome + " box image";
-    }
+    if (imgBoxEl) { imgBoxEl.src = produto.imagem; imgBoxEl.alt = produto.nome + " box image"; }
 
-    // Atualiza preços
     const precoOriginal = produto.precoOriginal;
     const precoComDesconto = precoOriginal * (1 - produto.desconto / 100);
-
     const precoOriginalEl = document.getElementById("preco-original");
-    if (precoOriginalEl) precoOriginalEl.textContent = `R$ ${precoOriginal.toFixed(2).replace('.', ',')}`;
     const precoComDescEl = document.getElementById("preco-com-desconto");
+    if (precoOriginalEl) precoOriginalEl.textContent = `R$ ${precoOriginal.toFixed(2).replace('.', ',')}`;
     if (precoComDescEl) precoComDescEl.textContent = `R$ ${precoComDesconto.toFixed(2).replace('.', ',')}`;
 
     const discountBadge = document.getElementById("discount-badge");
-    if (discountBadge) {
-      if (produto.desconto && produto.desconto > 0) {
-        discountBadge.textContent = `-${produto.desconto}%`;
-        discountBadge.style.display = "block";
-      } else {
-        discountBadge.style.display = "none";
-      }
-    }
+    if (discountBadge) discountBadge.style.display = (produto.desconto && produto.desconto > 0) ? "block" : "none";
+    if (discountBadge) discountBadge.textContent = (produto.desconto && produto.desconto > 0) ? `-${produto.desconto}%` : "";
 
     gerarBreadcrumb(produto);
 
-  } catch (error) {
-    alert(error.message);
-  }
+  } catch (error) { alert(error.message); }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  carregarCarrinho().then(() => {
+    atualizarListaCarrinho();
+    atualizarBadges();
+  });
   carregarProduto();
   carregarAvaliacoes();
   carregarSessaoGostar();
+  carregarFavoritos(); 
 });
