@@ -1,7 +1,7 @@
 let avaliacoes = [];
 let favoritos = [];
 let carrinho = [];
-let produtos = []; 
+let produtos = [];
 
 const todosBotoes = document.querySelectorAll(".category-btn");
 
@@ -19,51 +19,67 @@ function atualizarBadges() {
 atualizarBadges();
 
 document.addEventListener("click", (e) => {
-
   if (e.target.closest(".favorite-btn")) {
     const btn = e.target.closest(".favorite-btn");
     const icon = btn.querySelector("i");
     const produtoId = Number(btn.closest(".product-card").getAttribute("data-id"));
+    const produto = produtos.find(p => p.id === produtoId);
+    if (!produto) return;
 
-    if (!btn.classList.contains("favoritado")) {
+    const index = favoritos.findIndex(f => f.id === produtoId);
+
+    if (index === -1) {
       btn.classList.add("favoritado");
       icon.classList.remove("fa-heart-o");
       icon.classList.add("fa-heart");
       icon.style.color = "red";
 
-      favoritos.push(produtoId);  
+      favoritos.push({
+        id: produto.id,
+        nome: produto.nome,
+        imagem: produto.imagem,
+        precoOriginal: produto.precoOriginal,
+        desconto: produto.desconto || 0,
+        quantidade: 1
+      });
       mostrarPopup("Adicionado aos favoritos");
     } else {
       btn.classList.remove("favoritado");
-      icon.classList.remove("fa-heart");
-      icon.classList.add("fa-heart-o");
+      icon.classList.replace("fa-heart", "fa-heart-o");
       icon.style.color = "";
-
-      favoritos = favoritos.filter(f => f !== produtoId); 
+      favoritos.splice(index, 1);
       mostrarPopup("Removido dos favoritos");
     }
 
     atualizarBadges();
     atualizarLista("popup-favoritos");
-    salvarFavoritosServidor(); 
+    salvarFavoritosServidor();
   }
 
   if (e.target.closest(".product-button")) {
-    const produtoId = Number(e.target.closest(".product-card").getAttribute("data-id"));
+    const btn = e.target.closest(".product-button");
+    const produtoId = Number(btn.closest(".product-card").getAttribute("data-id"));
     const produto = produtos.find(p => p.id === produtoId);
-    if (produto) {
+    if (!produto) return;
 
-      let itemCarrinho = carrinho.find(p => p.id === produto.id);
-      if (itemCarrinho) {
-        itemCarrinho.quantidade = (itemCarrinho.quantidade || 1) + 1;
-      } else {
-        carrinho.push({ ...produto, quantidade: 1 });
-      }
-      atualizarBadges();
-      atualizarListaCarrinho();
-      salvarCarrinhoServidor();
-      mostrarPopup("Produto adicionado ao carrinho");
+    const carrinhoItem = carrinho.find(item => item.id === produtoId);
+    if (carrinhoItem) {
+      carrinhoItem.quantidade += 1; 
+    } else {
+      carrinho.push({
+        id: produto.id,
+        nome: produto.nome,
+        imagem: produto.imagem,
+        precoOriginal: produto.precoOriginal,
+        desconto: produto.desconto || 0,
+        quantidade: 1
+      });
     }
+
+    atualizarListaCarrinho();
+    atualizarBadges();
+    salvarCarrinhoServidor();
+    mostrarPopup("Adicionado ao carrinho");
   }
 });
 
@@ -86,7 +102,8 @@ function mostrarPopup(mensagem) {
 }
 
 function adicionarFavorito(item) {
-  if (!favoritos.includes(item)) favoritos.push(item);
+  const itemId = item.id || item;
+  if (!favoritos.includes(itemId)) favoritos.push(itemId);
   atualizarBadges();
   atualizarLista("popup-favoritos");
 }
@@ -122,6 +139,68 @@ function removerCarrinho(id) {
       atualizarBadges();
     })
     .catch(err => console.error(err));
+}
+
+function removerFavorito(id) {
+  favoritos = favoritos.filter(fav => fav.id !== id);
+  atualizarLista("popup-favoritos");
+  atualizarBadges();
+  fetch('http://localhost:3000/favoritos', {
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(favoritos)
+  })
+    .then(res => res.json())
+    .then(() => console.log('Favoritos atualizados no servidor'))
+    .catch(err => console.error('Erro ao atualizar favoritos:', err));
+}
+
+function atualizarLista(idPopup) {
+  const listaElement = document.getElementById(idPopup === "popup-favoritos" ? "lista-favoritos" : idPopup);
+  if (!listaElement) return;
+
+  listaElement.innerHTML = "";
+  const lista = idPopup === "popup-favoritos" ? favoritos : carrinho;
+
+  if (!lista || lista.length === 0) {
+    listaElement.innerHTML = "<li>Nenhum item adicionado</li>";
+    return;
+  }
+
+  lista.forEach(item => {
+    const precoComDesconto = (item.precoOriginal * (1 - (item.desconto || 0) / 100))
+      .toFixed(2).replace('.', ',');
+
+    listaElement.innerHTML += `
+  <li style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+          <img src="${item.imagem}" alt="${item.nome}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+          <div>
+              <strong>${item.nome}</strong><br>
+              R$ ${precoComDesconto} ${item.desconto > 0 ? `<span style="color:red;">(-${item.desconto}%)</span>` : ""}
+          </div>
+      </div>
+      <button onclick="removerFavorito(${item.id})">
+          <i class="fa-solid fa-trash"></i>
+      </button>
+  </li>
+`;
+  });
+}
+
+function aplicarFavoritosUI() {
+  favoritos.forEach(fav => {
+    const card = document.querySelector(`.product-card[data-id="${fav.id}"]`);
+    if (!card) return;
+
+    const btn = card.querySelector(".favorite-btn");
+    const icon = btn.querySelector("i");
+
+    btn.classList.add("favoritado");
+    icon.classList.remove("fa-heart-o");
+    icon.classList.add("fa-heart");
+    icon.style.color = "red";
+  });
 }
 
 function atualizarListaCarrinho() {
@@ -168,8 +247,7 @@ async function carregarFavoritos() {
     if (!res.ok) throw new Error('Erro ao carregar favoritos');
     const json = await res.json();
 
-    favoritos = Array.isArray(json) ? json : [];
-
+    favoritos = json.data || [];
     atualizarBadges();
     atualizarLista("popup-favoritos");
   } catch (err) {
@@ -185,7 +263,7 @@ function alterarQuantidade(produtoId, delta) {
   if (item.quantidade < 1) item.quantidade = 1;
   atualizarBadges();
   atualizarListaCarrinho();
-  salvarCarrinhoServidor(); 
+  salvarCarrinhoServidor();
 }
 
 function salvarCarrinhoServidor() {
@@ -237,7 +315,7 @@ function gerarBreadcrumb(produto) {
 fetch(API_PRODUTOS_URL)
   .then(res => res.json())
   .then(resProdutos => {
-    produtos = resProdutos; 
+    produtos = resProdutos;
     const produto = produtos.find(p => p.id == idDoProduto);
     if (produto) {
       gerarBreadcrumb(produto);
@@ -327,7 +405,7 @@ async function carregarSessaoGostar() {
     if (!resProdutos.ok || !resAvaliacoes.ok) throw new Error('Erro ao carregar dados.');
 
     const produtosResp = await resProdutos.json();
-    produtos = produtosResp; 
+    produtos = produtosResp;
     const avaliacoesData = await resAvaliacoes.json();
 
     const idAtual = parseInt(params.get("id"), 10);
@@ -464,13 +542,15 @@ async function carregarProduto() {
   } catch (error) { alert(error.message); }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  carregarCarrinho().then(() => {
-    atualizarListaCarrinho();
-    atualizarBadges();
-  });
+window.addEventListener('DOMContentLoaded', async () => {
+  await carregarSessaoGostar();
+  await carregarFavoritos();
+  await carregarSessaoGostar();
+  await carregarFavoritos();
+  aplicarFavoritosUI();
+  await carregarCarrinho();
+  atualizarListaCarrinho();
+  atualizarBadges();
   carregarProduto();
   carregarAvaliacoes();
-  carregarSessaoGostar();
-  carregarFavoritos(); 
 });

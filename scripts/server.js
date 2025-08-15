@@ -83,10 +83,10 @@ app.get('/favoritos', (req, res) => {
 });
 
 app.post('/favoritos', (req, res) => {
-  const novosFavoritos = { data: req.body };
+  const novosFavoritos = { data: req.body }; 
   fs.writeFile(arquivoFavoritos, JSON.stringify(novosFavoritos, null, 2), (err) => {
     if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos' });
-    res.json({ status: 'ok' });
+    res.json({ status: 'ok', data: novosFavoritos });
   });
 });
 
@@ -97,6 +97,36 @@ app.get('/produtos', (req, res) => {
       return res.status(500).json({ erro: 'Erro ao ler arquivo produtos' });
     }
     res.json(JSON.parse(data));
+  });
+});
+
+app.delete('/favoritos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+
+  fs.readFile(arquivoFavoritos, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.status(404).json({ erro: 'Favoritos vazio' });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo favoritos' });
+    }
+
+    let favoritosAtual;
+    try {
+      const parsed = JSON.parse(data);
+      favoritosAtual = parsed.data || [];
+    } catch {
+      favoritosAtual = [];
+    }
+
+    const novoArray = favoritosAtual.filter(fav => fav.id !== id);
+
+    if (novoArray.length === favoritosAtual.length) {
+      return res.status(404).json({ erro: 'Item não encontrado nos favoritos' });
+    }
+
+    fs.writeFile(arquivoFavoritos, JSON.stringify({ data: novoArray }, null, 2), (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos' });
+      res.status(200).json({ status: 'ok' });
+    });
   });
 });
 

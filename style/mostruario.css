@@ -965,3 +965,31 @@ a {
     min-width: 20px;
     text-align: center;
 }
+
+li button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 16px;
+    transition: color 0.2s;
+    padding-left: 50px;
+}
+
+li button:hover {
+    color: red;
+}
+
+li button i {
+    pointer-events: none;
+}
+
+#lista-favoritos li,
+#lista-carrinho li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
