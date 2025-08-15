@@ -16,7 +16,6 @@ const ordenarSelect = document.getElementById("ordenarSelect");
 const API_URL = "http://localhost:3000/produtos"; // backend produtos
 const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes"; // backend avaliacao
 
-// Carrega os produtos do backend
 async function carregarProdutos() {
   try {
     const res = await fetch(API_URL);
@@ -28,7 +27,6 @@ async function carregarProdutos() {
   }
 }
 
-// Função para carregar avaliações da API e retornar array
 async function carregarAvaliacoes() {
   try {
     const res = await fetch(API_AVALIACOES_URL);
@@ -40,9 +38,8 @@ async function carregarAvaliacoes() {
   }
 }
 
-// Atualiza produtos com dados das avaliações (média e quantidade)
 function atualizarProdutosComAvaliacoes(avaliacoes) {
-  // Agrupa avaliações por produtoId
+
   const avaliacoesPorProduto = {};
   avaliacoes.forEach(av => {
     if (!avaliacoesPorProduto[av.produtoId]) {
@@ -51,7 +48,6 @@ function atualizarProdutosComAvaliacoes(avaliacoes) {
     avaliacoesPorProduto[av.produtoId].push(av.rating);
   });
 
-  // Atualiza cada produto com média e quantidade de avaliações
   produtos = produtos.map(prod => {
     const avals = avaliacoesPorProduto[prod.id] || [];
     const soma = avals.reduce((acc, val) => acc + val, 0);
@@ -64,14 +60,12 @@ function atualizarProdutosComAvaliacoes(avaliacoes) {
   });
 }
 
-// Modifique carregarProdutos para carregar as avaliações e atualizar antes de mostrar
 async function carregarProdutos() {
   try {
     const res = await fetch(API_URL);
     if (!res.ok) throw new Error("Erro ao carregar produtos.");
     produtos = await res.json();
 
-    // Carrega avaliações e atualiza os produtos
     const avaliacoes = await carregarAvaliacoes();
     atualizarProdutosComAvaliacoes(avaliacoes);
 
@@ -84,7 +78,6 @@ async function carregarProdutos() {
 function mostrarProdutos() {
   let htmlProdutos = "";
 
-  // Filtra produtos conforme busca e categoria
   let produtosFiltrados = produtos.filter((prd) => {
     const passouCategoria =
       categoriaAtual === "all" || prd.categoria === categoriaAtual;
@@ -94,7 +87,6 @@ function mostrarProdutos() {
     return passouPesquisa && passouCategoria;
   });
 
-  // Ordena produtos conforme opção selecionada
   produtosFiltrados.sort((a, b) => {
     switch (ordenacaoAtual) {
       case "nomeProduto":
@@ -115,7 +107,6 @@ function mostrarProdutos() {
     }
   });
 
-  // Cria cards para cada produto
   produtosFiltrados.forEach((prd) => {
     const precoComDesconto = prd.precoOriginal * (1 - (prd.desconto || 0) / 100);
     const precoFinal = precoComDesconto.toFixed(2).replace(".", ",");
@@ -182,7 +173,6 @@ function mostrarProdutos() {
     `;
   });
 
-  // Card para adicionar produto
   htmlProdutos += `
     <div class="add-product-card" tabindex="0" role="button" aria-label="Adicionar produto" id="btnAdicionarProduto">
       <div class="add-product-content">
@@ -194,7 +184,6 @@ function mostrarProdutos() {
 
   containerProdutos.innerHTML = htmlProdutos;
 
-  // Abrir modal para adicionar
   const btnAdicionarProduto = document.getElementById("btnAdicionarProduto");
   if (btnAdicionarProduto) {
     btnAdicionarProduto.addEventListener("click", () => {
@@ -206,7 +195,6 @@ function mostrarProdutos() {
     });
   }
 
-  // Remover produto
   document.querySelectorAll(".delete-btn").forEach(btn => {
     btn.addEventListener("click", async () => {
       const id = btn.dataset.id;
@@ -223,7 +211,6 @@ function mostrarProdutos() {
     });
   });
 
-  // Editar produto
   document.querySelectorAll(".edit-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const id = btn.dataset.id;
@@ -245,8 +232,6 @@ function mostrarProdutos() {
   });
 }
 
-
-// Função para pegar o parâmetro da URL
 function getParameterByName(name) {
   const url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
@@ -283,13 +268,10 @@ function adicionarEventosRemocao() {
     btn.addEventListener('click', function () {
       const id = parseInt(this.dataset.id);
 
-      // Supondo que sua lista de produtos esteja no array `produtos`
       produtos = produtos.filter(prod => prod.id !== id);
 
-      // Se estiver usando localStorage
       localStorage.setItem('produtos', JSON.stringify(produtos));
 
-      // Re-renderiza os produtos
       renderizarProdutos();
     });
   });
@@ -326,7 +308,6 @@ function trocarCategoria(categoria) {
   mostrarProdutos();
 }
 
-// Adiciona produto via API POST
 async function adicionarProduto(event) {
   event.preventDefault();
 
@@ -534,7 +515,6 @@ document.addEventListener("DOMContentLoaded", function () {
     startInterval();
   }
 
-  // Inicializa
   showSlide(0);
   startInterval();
 });

@@ -54,14 +54,12 @@ app.delete('/carrinho/:id', (req, res) => {
       carrinhoAtual = [];
     }
 
-    // Filtra o item pelo id
     const novoCarrinho = carrinhoAtual.filter(item => item.id !== id);
 
     if (novoCarrinho.length === carrinhoAtual.length) {
       return res.status(404).json({ erro: 'Item não encontrado no carrinho' });
     }
 
-    // Salva de volta no arquivo mantendo a chave "data"
     fs.writeFile(arquivoCarrinho, JSON.stringify({ data: novoCarrinho }, null, 2), (err) => {
       if (err) return res.status(500).json({ erro: 'Erro ao salvar carrinho' });
       res.status(200).json({ status: 'ok' });
