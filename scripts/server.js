@@ -10,6 +10,7 @@ const arquivoProdutos = path.join(__dirname, '../data/produtos.json');
 const arquivoAvaliacoes = path.join(__dirname, '../data/avaliacoes.json');
 const arquivoCarrinho = path.join(__dirname, '../data/carrinho.json');
 const arquivoFavoritos = path.join(__dirname, '../data/favoritos.json');
+const arquivoFavoritoInicio = path.join(__dirname, '../data/favoritosinicio.json');
 
 app.use(cors());
 app.use(express.json());
@@ -67,6 +68,55 @@ app.delete('/carrinho/:id', (req, res) => {
   });
 });
 
+app.get('/favoritosinicio', (req, res) => {
+  fs.readFile(arquivoFavoritoInicio, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.json({ data: [] });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo favoritos inicio' });
+    }
+    try {
+      const favoritosInicio = JSON.parse(data);
+      res.json(favoritosInicio);
+    } catch {
+      res.json({ data: [] });
+    }
+  });
+});
+
+app.post('/favoritosinicio', (req, res) => {
+  const novosFavoritos = { data: req.body }; 
+  fs.writeFile(arquivoFavoritos, JSON.stringify(novosFavoritos, null, 2), (err) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos' });
+    res.json({ status: 'ok', data: novosFavoritos });
+  });
+});
+
+app.delete('/favoritosinicio/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+
+  fs.readFile(arquivoFavoritoInicio, 'utf8', (err, data) => {
+    if (err) {
+      if (err.code === 'ENOENT') return res.status(404).json({ erro: 'Favoritos vazio' });
+      return res.status(500).json({ erro: 'Erro ao ler arquivo favoritos inicio' });
+    }
+
+    let favoritosAtual;
+    try {
+      const parsed = JSON.parse(data);
+      favoritosAtual = parsed.data || [];
+    } catch {
+      favoritosAtual = [];
+    }
+
+    const novoArray = favoritosAtual.filter(fav => fav.id !== id);
+
+    fs.writeFile(arquivoFavoritoInicio, JSON.stringify({ data: novoArray }, null, 2), (err) => {
+      if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos inicio' });
+      res.status(200).json({ status: 'ok' });
+    });
+  });
+});
+
 app.get('/favoritos', (req, res) => {
   fs.readFile(arquivoFavoritos, 'utf8', (err, data) => {
     if (err) {
@@ -83,7 +133,7 @@ app.get('/favoritos', (req, res) => {
 });
 
 app.post('/favoritos', (req, res) => {
-  const novosFavoritos = { data: req.body }; 
+  const novosFavoritos = { data: req.body };
   fs.writeFile(arquivoFavoritos, JSON.stringify(novosFavoritos, null, 2), (err) => {
     if (err) return res.status(500).json({ erro: 'Erro ao salvar favoritos' });
     res.json({ status: 'ok', data: novosFavoritos });

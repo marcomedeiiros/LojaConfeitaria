@@ -1,9 +1,10 @@
 let textoPesquisa = "";
 let categoriaAtual = "all";
-let ordenacaoAtual = "nomeProduto"; // ordenação inicial
+let ordenacaoAtual = "nomeProduto";
 let modoEdicao = false;
 let idEditando = null;
 let produtos = [];
+let favoritos = [];
 
 const containerProdutos = document.querySelector(".products-container");
 const input = document.querySelector(".search-input");
@@ -12,9 +13,10 @@ const modalAddProduto = document.getElementById("modalAddProduto");
 const btnFecharModal = document.getElementById("btnFecharModal");
 const formAddProduto = document.getElementById("formAddProduto");
 const ordenarSelect = document.getElementById("ordenarSelect");
+const badgeFavoritos = document.getElementById("badge-favoritos");
 
-const API_URL = "http://localhost:3000/produtos"; // backend produtos
-const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes"; // backend avaliacao
+const API_URL = "http://localhost:3000/produtos";
+const API_AVALIACOES_URL = "http://localhost:3000/avaliacoes";
 
 async function carregarProdutos() {
   try {
@@ -59,6 +61,181 @@ function atualizarProdutosComAvaliacoes(avaliacoes) {
     };
   });
 }
+
+function atualizarBadges() {
+  const badge = document.getElementById("badge-favoritos");
+  if (badge) badge.textContent = favoritos.length;
+}
+
+function mostrarPopup(mensagem) {
+  let popup = document.createElement("div");
+  popup.textContent = mensagem;
+  popup.style.position = "fixed";
+  popup.style.top = "50%";
+  popup.style.left = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.background = "#fff";
+  popup.style.padding = "15px 25px";
+  popup.style.borderRadius = "10px";
+  popup.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+  popup.style.fontSize = "16px";
+  popup.style.zIndex = "9999";
+  document.body.appendChild(popup);
+
+  setTimeout(() => popup.remove(), 1500);
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".favorite-btn");
+  if (!btn) return;
+
+  const card = btn.closest(".product-card");
+  if (!card) return;
+
+  const produtoId = Number(card.dataset.id);
+  const produto = produtos.find(p => p.id === produtoId);
+  if (!produto) return;
+
+  const icon = btn.querySelector("i");
+  const index = favoritos.findIndex(f => f.id === produtoId);
+
+  if (index === -1) {
+    favoritos.push({
+      id: produto.id,
+      nome: produto.nome,
+      imagem: produto.imagem,
+      precoOriginal: produto.precoOriginal,
+      desconto: produto.desconto || 0
+    });
+    btn.classList.add("favoritado");
+    icon.classList.replace("fa-heart-o", "fa-heart");
+    icon.style.color = "red";
+    btn.setAttribute("aria-pressed", "true");
+    mostrarPopup("Adicionado aos favoritos");
+  } else {
+    favoritos.splice(index, 1);
+    btn.classList.remove("favoritado");
+    icon.classList.replace("fa-heart", "fa-heart-o");
+    icon.style.color = "";
+    btn.setAttribute("aria-pressed", "false");
+    mostrarPopup("Removido dos favoritos");
+  }
+
+  atualizarListaFavoritos();
+  atualizarBadges();
+  salvarFavoritosServidor();
+});
+
+function atualizarListaFavoritos() {
+  const lista = document.getElementById("lista-favoritos");
+  if (!lista) return;
+
+  lista.innerHTML = "";
+  if (favoritos.length === 0) {
+    lista.innerHTML = "<li>Nenhum item adicionado</li>";
+    return;
+  }
+
+  favoritos.forEach(fav => {
+    const precoComDesconto = (fav.precoOriginal * (1 - (fav.desconto || 0) / 100))
+      .toFixed(2).replace(".", ",");
+    lista.innerHTML += `
+      <li style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img src="${fav.imagem}" alt="${fav.nome}" style="width:50px; height:50px; object-fit:cover; border-radius:5px;">
+          <div>
+            <strong>${fav.nome}</strong><br>
+            R$ ${precoComDesconto} ${fav.desconto > 0 ? `<span style="color:red;">(-${fav.desconto}%)</span>` : ""}
+          </div>
+        </div>
+        <button onclick="removerFavorito(${fav.id})">
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </li>
+    `;
+  });
+}
+
+function aplicarFavoritosUI() {
+  favoritos.forEach(fav => {
+    const card = document.querySelector(`.product-card[data-id="${fav.id}"]`);
+    if (!card) return;
+
+    const btn = card.querySelector(".favorite-btn");
+    const icon = btn.querySelector("i");
+
+    btn.classList.add("favoritado");
+    icon.classList.remove("fa-heart-o");
+    icon.classList.add("fa-heart");
+    icon.style.color = "red";
+  });
+}
+
+async function carregarFavoritos() {
+  try {
+    const res = await fetch("http://localhost:3000/favoritosinicio");
+    if (!res.ok) throw new Error("Erro ao carregar favoritos");
+    const json = await res.json();
+    favoritos = json.data || [];
+    atualizarBadges();
+    atualizarListaFavoritos();
+    aplicarFavoritosUI();
+  } catch (err) {
+    console.error(err);
+    favoritos = [];
+  }
+}
+
+
+document.querySelector('[title="Favoritos"]').addEventListener("click", () => {
+  const popup = document.getElementById("popup-favoritos");
+  if (!popup) return;
+  popup.style.display = "flex";
+  setTimeout(() => popup.classList.add("ativo"), 10);
+  atualizarListaFavoritos();
+});
+
+function fecharPopup(id) {
+  const popup = document.getElementById(id);
+  if (!popup) return;
+  popup.classList.remove("ativo");
+  setTimeout(() => {
+    popup.style.display = "none";
+  }, 300);
+}
+
+function removerFavorito(id) {
+  favoritos = favoritos.filter(fav => fav.id !== id);
+  atualizarListaFavoritos();
+  atualizarBadges();
+  salvarFavoritosServidor();
+  fetch('http://localhost:3000/favoritosinicio', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(favoritos)
+  })
+    .then(res => res.json())
+    .then(() => console.log('Favoritos atualizados no servidor'))
+    .catch(err => console.error('Erro ao atualizar favoritos:', err));
+}
+
+function salvarFavoritosServidor() {
+  fetch('http://localhost:3000/favoritosinicio', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(favoritos)
+  })
+    .then(res => res.json())
+    .then(() => console.log('Favoritos salvos no servidor'))
+    .catch(err => console.error('Erro ao salvar favoritos:', err));
+}
+
+document.querySelectorAll(".popup-close").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const target = e.currentTarget.getAttribute("data-target");
+    fecharPopup(target);
+  });
+});
 
 async function carregarProdutos() {
   try {
@@ -125,52 +302,48 @@ function mostrarProdutos() {
       }
     }
 
+    const isFavorito = favoritos.some(fav => fav.id === prd.id);
+
     htmlProdutos += `
-      <div class="product-card" tabindex="0" aria-label="${prd.nome}, preço R$${precoFinal}">
-        ${prd.desconto > 0 ? `<div class="product-discount">-${prd.desconto}%</div>` : ""}
-        
-        <button class="favorite-btn" aria-label="Favoritar ${prd.nome}">
-          <i class="fa fa-heart-o"></i>
-        </button>
+  <div class="product-card" data-id="${prd.id}" tabindex="0" aria-label="${prd.nome}, preço R$${precoFinal}">
+    ${prd.desconto > 0 ? `<div class="product-discount">-${prd.desconto}%</div>` : ""}
 
-        <a href="./mostruarioProduto.html?id=${prd.id}">
-        <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
-       
+    <button class="favorite-btn" aria-label="Favoritar ${prd.nome}" aria-pressed="${isFavorito}">
+      <i class="fa ${isFavorito ? "fa-heart" : "fa-heart-o"}" style="color:${isFavorito ? "red" : ""}"></i>
+    </button>
 
-        
-        <div class="product-info">
-          <h3 class="product-name">${prd.nome}</h3>
-          <p class="product-description">${prd.descricao}</p>
+    <a href="./mostruarioProduto.html?id=${prd.id}">
+      <img class="product-img" src="${prd.imagem}" alt="${prd.nome}" title="${prd.nome}" />
 
-          <div class="product-rating">
-            ${estrelasHtml} <span class="rating-value">${rating.toFixed(1)}</span> (${avaliacoes})
-          </div>
+      <div class="product-info">
+        <h3 class="product-name">${prd.nome}</h3>
+        <p class="product-description">${prd.descricao}</p>
 
-          <p class="product-price">
-            ${prd.desconto > 0
-        ? `<span class="price-original">R$ ${precoOriginalFormatado}</span>`
-        : ""
-      }
-            R$ <span class="price-final">${precoFinal}</span>
-          </p>
-           
-
-          <div class="product-actions">
-            <button class="edit-btn" data-id="${prd.id}">
-              <i class="fa fa-pencil"></i> Editar
-            </button>
-            <button class="delete-btn" data-id="${prd.id}">
-              <i class="fa fa-trash"></i> Remover
-            </button>
-          </div>
-
-          <button class="product-button" type="button">
-            <i class="fa fa-shopping-cart"></i> Comprar Agora
-          </button>
-          </a>
+        <div class="product-rating">
+          ${estrelasHtml} <span class="rating-value">${rating.toFixed(1)}</span> (${avaliacoes})
         </div>
+
+        <p class="product-price">
+          ${prd.desconto > 0 ? `<span class="price-original">R$ ${precoOriginalFormatado}</span>` : ""}
+          R$ <span class="price-final">${precoFinal}</span>
+        </p>
+
+        <div class="product-actions">
+          <button class="edit-btn" data-id="${prd.id}">
+            <i class="fa fa-pencil"></i> Editar
+          </button>
+          <button class="delete-btn" data-id="${prd.id}">
+            <i class="fa fa-trash"></i> Remover
+          </button>
+        </div>
+
+        <button class="product-button" type="button">
+          <i class="fa fa-shopping-cart"></i> Comprar Agora
+        </button>
       </div>
-    `;
+    </a>
+  </div>
+`;
   });
 
   htmlProdutos += `
@@ -267,18 +440,12 @@ function adicionarEventosRemocao() {
   document.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', function () {
       const id = parseInt(this.dataset.id);
-
       produtos = produtos.filter(prod => prod.id !== id);
-
       localStorage.setItem('produtos', JSON.stringify(produtos));
-
-      renderizarProdutos();
+      mostrarProdutos();
     });
   });
-
-  adicionarEventosRemocao();
 }
-
 
 function abrirModal() {
   modalAddProduto.style.display = "flex";
@@ -367,24 +534,48 @@ async function adicionarProduto(event) {
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  carregarProdutos();
+window.addEventListener("DOMContentLoaded", async () => {
+  await carregarProdutos();
+  await carregarFavoritos();
 
   input.addEventListener("input", pesquisar);
 
   todosBotoes.forEach((botao) => {
     botao.addEventListener("click", () => {
-      const categoria = botao.getAttribute("data-category");
-      trocarCategoria(categoria);
+      trocarCategoria(botao.getAttribute("data-category"));
     });
   });
 
   btnFecharModal.addEventListener("click", fecharModal);
 
   modalAddProduto.addEventListener("click", (e) => {
-    if (e.target === modalAddProduto) {
+    if (e.target === modalAddProduto) fecharModal();
+  });
+
+  ordenarSelect.addEventListener("change", () => {
+    ordenacaoAtual = ordenarSelect.value;
+    mostrarProdutos();
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modalAddProduto.style.display === "flex") {
       fecharModal();
     }
+  });
+
+  document.querySelector('[title="Favoritos"]').addEventListener("click", () => {
+    const popup = document.getElementById("popup-favoritos");
+    if (!popup) return;
+    popup.style.display = "flex";
+    setTimeout(() => popup.classList.add("ativo"), 10);
+    atualizarListaFavoritos();
+  });
+
+  document.querySelectorAll(".popup-close").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const target = e.currentTarget.getAttribute("data-target");
+      fecharPopup(target);
+    });
   });
 
   formAddProduto.addEventListener("submit", async (event) => {

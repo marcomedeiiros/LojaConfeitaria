@@ -64,7 +64,7 @@ document.addEventListener("click", (e) => {
 
     const carrinhoItem = carrinho.find(item => item.id === produtoId);
     if (carrinhoItem) {
-      carrinhoItem.quantidade += 1; 
+      carrinhoItem.quantidade += 1;
     } else {
       carrinho.push({
         id: produto.id,
@@ -146,7 +146,7 @@ function removerFavorito(id) {
   atualizarLista("popup-favoritos");
   atualizarBadges();
   fetch('http://localhost:3000/favoritos', {
-    method: 'POST', 
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(favoritos)
   })
@@ -180,9 +180,9 @@ function atualizarLista(idPopup) {
               R$ ${precoComDesconto} ${item.desconto > 0 ? `<span style="color:red;">(-${item.desconto}%)</span>` : ""}
           </div>
       </div>
-      <button onclick="removerFavorito(${item.id})">
-          <i class="fa-solid fa-trash"></i>
-      </button>
+      <button onclick="removerFavorito(${item.id})" style="flex-shrink:0;">
+        <i class="fa-solid fa-trash"></i>
+    </button>
   </li>
 `;
   });
@@ -281,7 +281,7 @@ function salvarFavoritosServidor() {
   fetch('http://localhost:3000/favoritos', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(favoritos) 
+    body: JSON.stringify(favoritos)
   })
     .then(res => res.json())
     .then(() => console.log('Favoritos salvos no servidor'))
@@ -546,7 +546,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   await carregarSessaoGostar();
   await carregarFavoritos();
   await carregarSessaoGostar();
-  await carregarFavoritos();
   aplicarFavoritosUI();
   await carregarCarrinho();
   atualizarListaCarrinho();
