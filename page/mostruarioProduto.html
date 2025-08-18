@@ -111,8 +111,10 @@
             <div class="cep-calculation">
                 <label for="cep"><i class="fa-solid fa-truck"></i> INFORME SEU CEP</label>
                 <input type="text" id="cep" placeholder="00000-000" maxlength="9" aria-label="Informe seu CEP" />
-                <button class="btn-calc">Calcular</button>
+                <button class="btn-calc">Calcular</button>                
             </div>
+
+            <div id="cep-result" class="cep-result"></div>
 
             <p id="descricao-produto" style="margin-top: 2rem;">Descrição do produto...</p>
         </article>
@@ -210,7 +212,8 @@
             <ul id="lista-carrinho"></ul>
 
             <div class="popup-botoes">
-                <button class="btn-finalizar">Finalizar Compra</button>
+                <button class="btn-finalizar" onclick="window.location.href='../page/pagamento.html'">Finalizar
+                    Compra</button>
                 <button class="popup-fechar" data-target="popup-carrinho">Fechar</button>
             </div>
         </div>

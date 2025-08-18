@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style/mostruario.css" />
+    <link rel="stylesheet" href="../style/pagamento.css" />
+    <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <title>Financeiro - Confeitaria M&H</title>
+</head>
+
+<body>
+    <div class="pagamento-container">
+        <h2>Pagamento via QR Code</h2>
+        <ul id="carrinho" class="carrinho-lista"></ul>
+        <div class="resumo-carrinho">
+            <p>Itens: <span id="total-itens">0</span></p>
+            <p>Total: R$ <span id="total-final">0,00</span></p>
+        </div>
+        <p id="frete-gratis" class="frete-gratis">🚚 Frete grátis para todos os estados!</p>
+        <p id="status-pagamento" class="status-pagamento pendente">Status: Pendente</p>
+        <div class="tutorial-pagamento">
+            <h3>Como realizar o pagamento:</h3>
+            <ol>
+                <li>Abra o aplicativo do seu banco ou carteira digital.</li>
+                <li>Selecione a opção <strong>PIX</strong>.</li>
+                <li>Escaneie o QR Code acima ou copie o código manualmente.</li>
+                <li>Confirme o valor e finalize o pagamento.</li>
+                <li>Após o pagamento, clique em "Simular Pagamento" para atualizar o status.</li>
+            </ol>
+        </div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=PIX-SIMULADO-123456789"
+            alt="QR Code de Pagamento" class="qr-code">
+        <button class="btn-simular" onclick="simularPagamento()">Simular Pagamento</button>
+    </div>
+    <script src="../scripts/pagamento.js"></script>
+</body>
+
+</html>

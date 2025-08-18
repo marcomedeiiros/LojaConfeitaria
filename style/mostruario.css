@@ -990,3 +990,9 @@ a {
 #lista-favoritos li button i {
   pointer-events: none; 
 }
+
+.cep-result {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #5a3e32;
+}

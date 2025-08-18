@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f7f7f7;
+    margin: 0;
+}
+
+.pagamento-container {
+    text-align: center;
+    background: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    max-width: 400px;
+    width: 100%;
+}
+
+.pagamento-container h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.qr-code {
+    width: 220px;
+    height: 220px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.btn-simular {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-simular:hover {
+    background: #45a049;
+}
+
+.carrinho-lista {
+    list-style: none;
+}
+
+.tutorial-pagamento {
+    text-align: left;
+    margin-top: 20px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #333;
+}
+
+.tutorial-pagamento h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.tutorial-pagamento ol {
+    padding-left: 20px;
+}
+
+.tutorial-pagamento li {
+    margin-bottom: 8px;
+}
+
+.resumo-carrinho {
+    margin: 15px 0;
+    text-align: left;
+    font-size: 14px;
+    padding: 10px 15px;
+    background: #f1f1f1;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.status-pagamento {
+    font-weight: bold;
+    margin: 15px 0;
+    font-size: 16px;
+}
+
+.status-pagamento.pago {
+    color: green;
+}
+
+.status-pagamento.pendente {
+    color: red;
+}
+
+.historico-pagamentos {
+    margin-top: 20px;
+    text-align: left;
+    font-size: 14px;
+    background: #f9f9f9;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.historico-pagamentos h4 {
+    margin-bottom: 10px;
+}
+
+.frete-gratis {
+    font-weight: 600;
+    color: #4CAF50;
+    margin-top: 5px;
+    font-size: 14px;
+}

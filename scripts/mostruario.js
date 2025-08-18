@@ -98,7 +98,54 @@ function mostrarPopup(mensagem) {
   popup.style.zIndex = "9999";
   document.body.appendChild(popup);
 
-  setTimeout(() => popup.remove(), 1500);
+  setTimeout(() => popup.remove(), 5000);
+}
+
+const btnCalc = document.querySelector('.btn-calc');
+const inputCep = document.getElementById('cep');
+const cepResult = document.getElementById('cep-result');
+
+btnCalc.addEventListener('click', async () => {
+    const cep = inputCep.value.replace(/\D/g, '');
+    if (!validarCEP(cep)) {
+        cepResult.textContent = "CEP inválido!";
+        return;
+    }
+
+    try {
+        const resultado = await calcularFrete(cep);
+        cepResult.innerHTML = `
+            <strong>Endereço:</strong> ${resultado.logradouro}, ${resultado.bairro}, ${resultado.localidade} - ${resultado.uf}<br>
+            <strong>Frete:</strong> ${resultado.frete === 0 ? "Grátis" : "R$ " + resultado.frete.toFixed(2).replace('.', ',')}
+        `;
+    } catch (err) {
+        cepResult.textContent = "Erro ao calcular frete.";
+        console.error(err);
+    }
+});
+
+function validarCEP(cep) {
+    return /^[0-9]{8}$/.test(cep);
+}
+
+async function calcularFrete(cep) {
+    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const data = await res.json();
+
+    if (data.erro) throw new Error("CEP não encontrado");
+
+    let uf = (data.uf || "").trim().toUpperCase();
+
+
+    let freteBase = 0;
+
+    return {
+        frete: freteBase,
+        logradouro: data.logradouro || "Não informado",
+        bairro: data.bairro || "Não informado",
+        localidade: data.localidade || "Não informado",
+        uf: uf
+    };
 }
 
 function adicionarFavorito(item) {
