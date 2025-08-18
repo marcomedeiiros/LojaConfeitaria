@@ -203,6 +203,34 @@ function aplicarFavoritosUI() {
   });
 }
 
+const btnComprar = document.getElementById("btn-comprar");
+if (btnComprar) {
+  btnComprar.addEventListener("click", () => {
+    const quantidade = parseInt(document.getElementById("quantidade").value) || 1;
+    const produto = produtos.find(p => p.id === idDoProduto);
+    if (!produto) return;
+
+    const carrinhoItem = carrinho.find(item => item.id === produto.id);
+    if (carrinhoItem) {
+      carrinhoItem.quantidade += quantidade;
+    } else {
+      carrinho.push({
+        id: produto.id,
+        nome: produto.nome,
+        imagem: produto.imagem,
+        precoOriginal: produto.precoOriginal,
+        desconto: produto.desconto || 0,
+        quantidade: quantidade
+      });
+    }
+
+    atualizarListaCarrinho();
+    atualizarBadges();
+    salvarCarrinhoServidor();
+    mostrarPopup("Produto adicionado ao carrinho");
+  });
+}
+
 function atualizarListaCarrinho() {
   const listaElement = document.getElementById("lista-carrinho");
   if (!listaElement) return;
